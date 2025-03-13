@@ -1,7 +1,7 @@
 import { AuthProviderRepository } from '@domain/main/app/repositories/auth-provider-repository'
 import { AuthProvider } from '@domain/main/enterprise/entities/auth-provider'
 import { Injectable } from '@nestjs/common'
-import { AUTH_PROVIDERS } from 'src/core/constants/auth-provider'
+import { AUTH_METHOD } from 'src/core/constants/auth-provider'
 import { PrismaProviderMapper } from '../mappers/prisma-provider-mapper'
 import { PrismaService } from '../prisma.service'
 
@@ -29,9 +29,7 @@ export class PrismaAuthProviderRepository implements AuthProviderRepository {
     return providers.map(PrismaProviderMapper.toDomain)
   }
 
-  async findByProvider(
-    provider: AUTH_PROVIDERS
-  ): Promise<AuthProvider[] | null> {
+  async findByProvider(provider: AUTH_METHOD): Promise<AuthProvider[] | null> {
     const user = await this.prisma.authProvider.findMany({
       where: { name: provider },
     })

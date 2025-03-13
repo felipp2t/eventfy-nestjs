@@ -1,4 +1,4 @@
-export enum AUTH_PROVIDERS {
+export enum AUTH_METHOD {
   GOOGLE = 'GOOGLE',
   GITHUB = 'GITHUB',
   EMAIL = 'EMAIL',

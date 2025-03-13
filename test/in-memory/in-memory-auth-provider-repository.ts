@@ -1,6 +1,6 @@
-import { AuthProviderRepository } from "@domain/main/app/repositories/auth-provider-repository"
-import { AuthProvider } from "@domain/main/enterprise/entities/auth-provider"
-import { AUTH_PROVIDERS } from "core/constants/auth-provider"
+import { AuthProviderRepository } from '@domain/main/app/repositories/auth-provider-repository'
+import { AuthProvider } from '@domain/main/enterprise/entities/auth-provider'
+import { AUTH_METHOD } from 'core/constants/auth-provider'
 
 export class InMemoryAuthProviderRepository implements AuthProviderRepository {
   public items: AuthProvider[] = []
@@ -13,7 +13,7 @@ export class InMemoryAuthProviderRepository implements AuthProviderRepository {
     return this.items.filter(provider => provider.userId.toString() === userId)
   }
 
-  async findByProvider(provider: AUTH_PROVIDERS) {
+  async findByProvider(provider: AUTH_METHOD) {
     return this.items.filter(p => p.provider === provider) || null
   }
 

@@ -2,7 +2,7 @@ import { AuthProvider } from '@domain/main/enterprise/entities/auth-provider'
 import { AuthToken } from '@domain/main/enterprise/entities/auth-token'
 import { User } from '@domain/main/enterprise/entities/user'
 import { Injectable } from '@nestjs/common'
-import { AUTH_PROVIDERS } from 'src/core/constants/auth-provider'
+import { AUTH_METHOD } from 'src/core/constants/auth-provider'
 import { Either, left, right } from 'src/core/either'
 import { EmailAlreadyInUse } from 'src/core/errors/errors/email-already-in-use'
 import { Encrypter } from '../cryptography/encrypter'
@@ -53,7 +53,7 @@ export class CreateAccountUseCase {
       const newProvider = AuthProvider.create({
         name,
         userId: newUser.id,
-        provider: AUTH_PROVIDERS.EMAIL,
+        provider: AUTH_METHOD.EMAIL,
       })
 
       const accessToken = await this.encrypter.encrypt({
@@ -85,14 +85,14 @@ export class CreateAccountUseCase {
       user.id.toString()
     )
 
-    if (providers?.some(p => p.provider === AUTH_PROVIDERS.EMAIL)) {
+    if (providers?.some(p => p.provider === AUTH_METHOD.EMAIL)) {
       return left(new EmailAlreadyInUse())
     }
 
     const newProvider = AuthProvider.create({
       name,
       userId: user.id,
-      provider: AUTH_PROVIDERS.EMAIL,
+      provider: AUTH_METHOD.EMAIL,
     })
 
     const accessToken = await this.encrypter.encrypt({

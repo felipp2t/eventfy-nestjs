@@ -1,4 +1,4 @@
-import { AUTH_PROVIDERS } from 'src/core/constants/auth-provider'
+import { AUTH_METHOD } from 'src/core/constants/auth-provider'
 import { Entity } from 'src/core/entities/entity'
 import { UniqueEntityID } from 'src/core/entities/unique-entity-id'
 import { Optional } from 'src/core/types/optional'
@@ -6,7 +6,7 @@ import { Optional } from 'src/core/types/optional'
 interface AuthProviderProps {
   userId: UniqueEntityID
   name: string
-  provider: AUTH_PROVIDERS
+  provider: AUTH_METHOD
   createdAt: Date
 }
 
@@ -19,7 +19,7 @@ export class AuthProvider extends Entity<AuthProviderProps> {
     return this.props.name
   }
 
-  get provider(): AUTH_PROVIDERS {
+  get provider(): AUTH_METHOD {
     return this.props.provider
   }
 
