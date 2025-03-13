@@ -8,39 +8,39 @@ datasource db {
 }
 
 model User {
-  id        String     @id @default(uuid())
-  email     String     @unique
+  id        String         @id @default(uuid())
+  email     String         @unique
   password  String?
-  createdAt DateTime   @default(now()) @map("created_at")
-  providers Provider[]
-  tokens    Token[]
+  createdAt DateTime       @default(now()) @map("created_at")
+  providers AuthProvider[]
+  tokens    AuthToken[]
 
   @@map("users")
 }
 
-model Provider {
-  id        String       @id @default(uuid())
-  provider  AuthProvider
-  name      String       @unique
-  userId    String       @map("user_id")
-  createdAt DateTime     @default(now()) @map("created_at")
-  user      User         @relation(fields: [userId], references: [id])
-  token     Token[]
+model AuthProvider {
+  id        String      @id @default(uuid())
+  provider  AuthMethod
+  name      String      @unique
+  userId    String      @map("user_id")
+  createdAt DateTime    @default(now()) @map("created_at")
+  user      User        @relation(fields: [userId], references: [id])
+  token     AuthToken[]
 
   @@map("providers")
 }
 
-model Token {
-  id           String   @id @default(uuid())
-  refreshToken String   @unique @map("refresh_token")
-  userId       String   @map("user_id")
-  providerId   String   @map("provider_id")
-  createdAt    DateTime @default(now()) @map("created_at")
-  user         User     @relation(fields: [userId], references: [id])
-  provider     Provider @relation(fields: [providerId], references: [id])
+model AuthToken {
+  id           String       @id @default(uuid())
+  refreshToken String       @unique @map("refresh_token")
+  userId       String       @map("user_id")
+  providerId   String       @map("provider_id")
+  createdAt    DateTime     @default(now()) @map("created_at")
+  user         User         @relation(fields: [userId], references: [id])
+  provider     AuthProvider @relation(fields: [providerId], references: [id])
 }
 
-enum AuthProvider {
+enum AuthMethod {
   GOOGLE
   GITHUB
   EMAIL
