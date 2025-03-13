@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common'
 
-import { Encrypter } from '../../domain/main/app/cryptography/encrypter.js'
-import { HashComparer } from '../../domain/main/app/cryptography/hash-comparer.js'
-import { HashGenerator } from '../../domain/main/app/cryptography/hash-generator.js'
+import { Encrypter } from '@domain/main/app/cryptography/encrypter.js'
+import { HashComparer } from '@domain/main/app/cryptography/hash-comparer.js'
+import { HashGenerator } from '@domain/main/app/cryptography/hash-generator.js'
 import { BcryptHasher } from './bcrypt-hasher.js'
 import { JwtEncrypter } from './jwt-encrypter.js'
 
