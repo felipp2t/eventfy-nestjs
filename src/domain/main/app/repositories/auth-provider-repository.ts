@@ -1,5 +1,5 @@
 import { AuthProvider } from '@domain/main/enterprise/entities/auth-provider'
-import { AUTH_PROVIDERS } from 'core/constants/auth-provider'
+import { AUTH_PROVIDERS } from 'src/core/constants/auth-provider'
 
 export abstract class AuthProviderRepository {
   abstract findById: (id: string) => Promise<AuthProvider | null>
