@@ -6,7 +6,12 @@ import { Encrypter } from 'src/domain/main/app/cryptography/encrypter.js'
 export class JwtEncrypter implements Encrypter {
   constructor(private jwtService: JwtService) {}
 
-  encrypt(payload: Record<string, unknown>): Promise<string> {
-    return this.jwtService.signAsync(payload)
+  encrypt(
+    payload: Record<string, unknown>,
+    expiresIn: string | number = '1d'
+  ): Promise<string> {
+    return this.jwtService.signAsync(payload, {
+      expiresIn,
+    })
   }
 }

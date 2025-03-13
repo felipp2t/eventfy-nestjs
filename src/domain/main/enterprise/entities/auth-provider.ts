@@ -3,7 +3,7 @@ import { Entity } from 'src/core/entities/entity'
 import { UniqueEntityID } from 'src/core/entities/unique-entity-id'
 import { Optional } from 'src/core/types/optional'
 
-interface AuthProviderProps {
+export interface AuthProviderProps {
   userId: UniqueEntityID
   name: string
   provider: AUTH_METHOD
