@@ -1,6 +1,6 @@
 import { EmailAlreadyInUse } from 'core/errors/errors/email-already-in-use'
-import { FakeEncrypter } from 'infra/cryptography/fake-encrypter'
-import { FakeHasher } from 'infra/cryptography/fake-hasher'
+import { FakeEncrypter } from '../../../../../test/cryptography/fake-encrypter'
+import { FakeHasher } from '../../../../../test/cryptography/fake-hasher'
 import { InMemoryAuthProviderRepository } from '../../../../../test/in-memory/in-memory-auth-provider-repository'
 import { InMemoryAuthTokenRepository } from '../../../../../test/in-memory/in-memory-auth-token-repository'
 import { InMemoryUserRepository } from '../../../../../test/in-memory/in-memory-user-repository'
