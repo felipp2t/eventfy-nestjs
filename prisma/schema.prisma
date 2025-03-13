@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(uuid())
+  email     String     @unique
+  password  String?
+  createdAt DateTime   @default(now()) @map("created_at")
+  providers Provider[]
+  tokens    Token[]
+
+  @@map("users")
+}
+
+model Provider {
+  id        String       @id @default(uuid())
+  provider  AuthProvider
+  name      String       @unique
+  userId    String       @map("user_id")
+  createdAt DateTime     @default(now()) @map("created_at")
+  user      User         @relation(fields: [userId], references: [id])
+  token     Token[]
+
+  @@map("providers")
+}
+
+model Token {
+  id           String   @id @default(uuid())
+  refreshToken String   @unique @map("refresh_token")
+  userId       String   @map("user_id")
+  providerId   String   @map("provider_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+  user         User     @relation(fields: [userId], references: [id])
+  provider     Provider @relation(fields: [providerId], references: [id])
+}
+
+enum AuthProvider {
+  GOOGLE
+  GITHUB
+  EMAIL
+}
