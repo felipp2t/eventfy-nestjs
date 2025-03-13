@@ -2,7 +2,7 @@ import { Entity } from 'src/core/entities/entity'
 import { UniqueEntityID } from 'src/core/entities/unique-entity-id'
 import { Optional } from 'src/core/types/optional'
 
-interface AuthTokenProps {
+export interface AuthTokenProps {
   refreshToken: string
   userId: UniqueEntityID
   providerId: UniqueEntityID
