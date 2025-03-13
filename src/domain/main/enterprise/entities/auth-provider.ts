@@ -1,7 +1,7 @@
-import { AUTH_PROVIDERS } from 'core/constants/auth-provider'
-import { Entity } from 'core/entities/entity'
-import { UniqueEntityID } from 'core/entities/unique-entity-id'
-import { Optional } from 'core/types/optional'
+import { AUTH_PROVIDERS } from 'src/core/constants/auth-provider'
+import { Entity } from 'src/core/entities/entity'
+import { UniqueEntityID } from 'src/core/entities/unique-entity-id'
+import { Optional } from 'src/core/types/optional'
 
 interface AuthProviderProps {
   userId: UniqueEntityID
