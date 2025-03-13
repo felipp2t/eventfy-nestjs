@@ -1,6 +1,6 @@
 import { AuthToken } from '@domain/main/enterprise/entities/auth-token'
 
-export abstract class TokenRepository {
+export abstract class AuthTokenRepository {
   abstract findByRefreshToken: (
     refreshToken: string
   ) => Promise<AuthToken | null>
