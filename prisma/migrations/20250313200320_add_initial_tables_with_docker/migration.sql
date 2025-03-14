@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "AuthProvider" AS ENUM ('GOOGLE', 'GITHUB', 'EMAIL');
+CREATE TYPE "AuthMethod" AS ENUM ('GOOGLE', 'GITHUB', 'EMAIL');
 
 -- CreateTable
 CREATE TABLE "users" (
@@ -14,7 +14,7 @@ CREATE TABLE "users" (
 -- CreateTable
 CREATE TABLE "providers" (
     "id" TEXT NOT NULL,
-    "provider" "AuthProvider" NOT NULL,
+    "provider" "AuthMethod" NOT NULL,
     "name" TEXT NOT NULL,
     "user_id" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -23,14 +23,14 @@ CREATE TABLE "providers" (
 );
 
 -- CreateTable
-CREATE TABLE "Token" (
+CREATE TABLE "AuthToken" (
     "id" TEXT NOT NULL,
     "refresh_token" TEXT NOT NULL,
     "user_id" TEXT NOT NULL,
     "provider_id" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "Token_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "AuthToken_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -40,13 +40,13 @@ CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 CREATE UNIQUE INDEX "providers_name_key" ON "providers"("name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Token_refresh_token_key" ON "Token"("refresh_token");
+CREATE UNIQUE INDEX "AuthToken_refresh_token_key" ON "AuthToken"("refresh_token");
 
 -- AddForeignKey
 ALTER TABLE "providers" ADD CONSTRAINT "providers_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Token" ADD CONSTRAINT "Token_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "AuthToken" ADD CONSTRAINT "AuthToken_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Token" ADD CONSTRAINT "Token_provider_id_fkey" FOREIGN KEY ("provider_id") REFERENCES "providers"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "AuthToken" ADD CONSTRAINT "AuthToken_provider_id_fkey" FOREIGN KEY ("provider_id") REFERENCES "providers"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
