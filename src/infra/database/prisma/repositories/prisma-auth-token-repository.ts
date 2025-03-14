@@ -1,7 +1,7 @@
 import { AuthTokenRepository } from '@domain/main/app/repositories/auth-token-repository.js'
 import { AuthToken } from '@domain/main/enterprise/entities/auth-token.js'
 import { Injectable } from '@nestjs/common'
-import { PrismaTokenMapper } from '../mappers/prisma-token-mapper.js'
+import { PrismaAuthTokenMapper } from '../mappers/prisma-token-mapper.js'
 import { PrismaService } from '../prisma.service.js'
 
 @Injectable()
@@ -9,7 +9,7 @@ export class PrismaAuthTokenRepository implements AuthTokenRepository {
   constructor(private prisma: PrismaService) {}
 
   async create(token: AuthToken): Promise<void> {
-    const data = PrismaTokenMapper.toPrisma(token)
+    const data = PrismaAuthTokenMapper.toPrisma(token)
 
     await this.prisma.authToken.create({ data })
   }
@@ -21,7 +21,7 @@ export class PrismaAuthTokenRepository implements AuthTokenRepository {
 
     if (!token) return null
 
-    return PrismaTokenMapper.toDomain(token)
+    return PrismaAuthTokenMapper.toDomain(token)
   }
 
   async deleteByUserId(userId: string): Promise<void> {

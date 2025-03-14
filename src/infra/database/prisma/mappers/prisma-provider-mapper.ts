@@ -3,7 +3,7 @@ import { AuthProvider as PrismaAuthProvider } from '@prisma/client'
 import { AUTH_METHOD } from 'src/core/constants/auth-provider'
 import { UniqueEntityID } from 'src/core/entities/unique-entity-id'
 
-export class PrismaProviderMapper {
+export class PrismaAuthProviderMapper {
   static toDomain(raw: PrismaAuthProvider): AuthProvider {
     return AuthProvider.create(
       {
