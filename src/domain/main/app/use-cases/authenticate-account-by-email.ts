@@ -1,4 +1,5 @@
 import { AuthToken } from '@domain/main/enterprise/entities/auth-token'
+import { Injectable } from '@nestjs/common'
 import { AUTH_METHOD } from 'src/core/constants/auth-provider'
 import { Either, left, right } from 'src/core/either'
 import { WrongCredentials } from 'src/core/errors/errors/wrong-credentials'
@@ -23,6 +24,7 @@ type AuthenticateAccountByEmailUseCaseResponse = Either<
   }
 >
 
+@Injectable()
 export class AuthenticateAccountByEmailUseCase {
   constructor(
     private userRepository: UserRepository,
