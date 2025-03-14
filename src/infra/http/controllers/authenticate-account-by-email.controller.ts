@@ -1,6 +1,6 @@
 import { AuthenticateAccountByEmailUseCase } from '@domain/main/app/use-cases/authenticate-account-by-email'
 import { Public } from '@infra/auth/public'
-import { ZodValidationPipe } from '@infra/pipes/zod-validation-pipe'
+import { ZodValidationPipe } from '@infra/http/pipes/zod-validation-pipe'
 import {
   BadRequestException,
   Body,

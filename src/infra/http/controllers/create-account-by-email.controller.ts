@@ -1,6 +1,6 @@
 import { CreateAccountUseCase } from '@domain/main/app/use-cases/create-account-by-email.js'
 import { Public } from '@infra/auth/public'
-import { ZodValidationPipe } from '@infra/pipes/zod-validation-pipe'
+import { ZodValidationPipe } from '@infra/http/pipes/zod-validation-pipe'
 
 import {
   BadRequestException,
@@ -48,13 +48,6 @@ export class CreateAccountController {
         default:
           throw new BadRequestException(error.message)
       }
-    }
-
-    const { accessToken, refreshToken } = result.value
-
-    return {
-      accessToken,
-      refreshToken,
     }
   }
 }
