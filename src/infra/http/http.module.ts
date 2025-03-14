@@ -1,12 +1,14 @@
+import { AuthenticateAccountByEmailUseCase } from '@domain/main/app/use-cases/authenticate-account-by-email'
 import { CreateAccountUseCase } from '@domain/main/app/use-cases/create-account-by-email'
 import { CryptographyModule } from '@infra/cryptography/cryptography.module'
 import { DatabaseModule } from '@infra/database/database.module'
 import { Module } from '@nestjs/common'
+import { AuthenticateAccountByEmailController } from './controllers/authenticate-account-by-email.controller'
 import { CreateAccountController } from './controllers/create-account-by-email.controller'
 
 @Module({
   imports: [DatabaseModule, CryptographyModule],
-  controllers: [CreateAccountController],
-  providers: [CreateAccountUseCase],
+  controllers: [CreateAccountController, AuthenticateAccountByEmailController],
+  providers: [CreateAccountUseCase, AuthenticateAccountByEmailUseCase],
 })
 export class HttpModule {}
