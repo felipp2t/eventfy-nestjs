@@ -15,8 +15,6 @@ describe('Create Account (E2E)', () => {
   let app: INestApplication
   let userFactory: UserFactory
   let authProviderFactory: AuthProviderFactory
-  let authTokenFactory: AuthTokenFactory
-  let prisma: PrismaService
 
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -33,8 +31,6 @@ describe('Create Account (E2E)', () => {
 
     userFactory = moduleRef.get(UserFactory)
     authProviderFactory = moduleRef.get(AuthProviderFactory)
-    authTokenFactory = moduleRef.get(AuthTokenFactory)
-    prisma = moduleRef.get(PrismaService)
 
     await app.init()
   })
