@@ -1,4 +1,4 @@
-import { UseCaseError } from '../errors.js'
+import { UseCaseError } from "src/core/errors/errors";
 
 export class EmailAlreadyInUse extends Error implements UseCaseError {
   constructor() {

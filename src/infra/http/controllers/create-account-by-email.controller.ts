@@ -2,6 +2,7 @@ import { CreateAccountUseCase } from '@domain/main/app/use-cases/create-account-
 import { Public } from '@infra/auth/public'
 import { ZodValidationPipe } from '@infra/http/pipes/zod-validation-pipe'
 
+import { EmailAlreadyInUse } from '@domain/main/app/use-cases/errors/email-already-in-use'
 import {
   BadRequestException,
   Body,
@@ -11,7 +12,6 @@ import {
   Post,
   UsePipes,
 } from '@nestjs/common'
-import { EmailAlreadyInUse } from 'src/core/errors/errors/email-already-in-use'
 import { z } from 'zod'
 
 const createAccountBodySchema = z.object({

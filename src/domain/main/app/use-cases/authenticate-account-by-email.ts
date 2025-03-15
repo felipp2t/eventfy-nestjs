@@ -1,8 +1,8 @@
+import { WrongCredentials } from '@domain/main/app/use-cases/errors/wrong-credentials'
 import { AuthToken } from '@domain/main/enterprise/entities/auth-token'
 import { Injectable } from '@nestjs/common'
 import { AUTH_METHOD } from 'src/core/constants/auth-provider'
 import { Either, left, right } from 'src/core/either'
-import { WrongCredentials } from 'src/core/errors/errors/wrong-credentials'
 import { Encrypter } from '../cryptography/encrypter'
 import { HashComparer } from '../cryptography/hash-comparer'
 import { AuthProviderRepository } from '../repositories/auth-provider-repository'
@@ -75,6 +75,7 @@ export class AuthenticateAccountByEmailUseCase {
     const refreshToken = await this.encrypter.encrypt(
       {
         sub: user.id.toString(),
+        providerId: emailProvider.id,
       },
       '7d'
     )

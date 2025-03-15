@@ -1,4 +1,5 @@
 import { AuthenticateAccountByEmailUseCase } from '@domain/main/app/use-cases/authenticate-account-by-email'
+import { WrongCredentials } from '@domain/main/app/use-cases/errors/wrong-credentials'
 import { Public } from '@infra/auth/public'
 import { ZodValidationPipe } from '@infra/http/pipes/zod-validation-pipe'
 import {
@@ -10,7 +11,6 @@ import {
   UnauthorizedException,
   UsePipes,
 } from '@nestjs/common'
-import { WrongCredentials } from 'src/core/errors/errors/wrong-credentials'
 import { z } from 'zod'
 
 const authenticateBodySchema = z.object({
