@@ -1,9 +1,9 @@
-import { FakeEncrypter } from '@test/cryptography/fake-encrypter'
+import { EmailAlreadyInUse } from '@domain/main/app/use-cases/errors/email-already-in-use'
+import { FakeCrypto } from '@test/cryptography/fake-crypto'
 import { FakeHasher } from '@test/cryptography/fake-hasher'
 import { InMemoryAuthProviderRepository } from '@test/in-memory/in-memory-auth-provider-repository'
 import { InMemoryAuthTokenRepository } from '@test/in-memory/in-memory-auth-token-repository'
 import { InMemoryUserRepository } from '@test/in-memory/in-memory-user-repository'
-import { EmailAlreadyInUse } from 'src/core/errors/errors/email-already-in-use'
 import { CreateAccountUseCase } from './create-account-by-email'
 
 type SutOutput = {
@@ -12,7 +12,7 @@ type SutOutput = {
   inMemoryAuthProviderRepository: InMemoryAuthProviderRepository
   inMemoryAuthTokenRepository: InMemoryAuthTokenRepository
   hashGenerator: FakeHasher
-  encrypter: FakeEncrypter
+  encrypter: FakeCrypto
 }
 
 const makeSut = (): SutOutput => {
@@ -20,7 +20,7 @@ const makeSut = (): SutOutput => {
   const inMemoryAuthProviderRepository = new InMemoryAuthProviderRepository()
   const inMemoryAuthTokenRepository = new InMemoryAuthTokenRepository()
   const hashGenerator = new FakeHasher()
-  const encrypter = new FakeEncrypter()
+  const encrypter = new FakeCrypto()
   const sut = new CreateAccountUseCase(
     inMemoryUserRepository,
     inMemoryAuthProviderRepository,
