@@ -25,7 +25,7 @@ export class JwtEncrypter implements Encrypter, Descrypter {
   decrypt<T extends object>(ciphertext: string): Promise<T> {
     return this.jwtService.verifyAsync<T>(ciphertext, {
       algorithms: ['RS256'],
-      publicKey: this.envService.get('JWT_PRIVATE_KEY'),
+      publicKey: this.envService.get('JWT_PUBLIC_KEY'),
     })
   }
 }
