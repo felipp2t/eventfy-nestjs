@@ -63,7 +63,6 @@ describe('Refresh Token', () => {
     const token = makeAuthToken({
       userId: user.id,
       providerId: provider.id,
-      expiresIn: new Date(new Date().setDate(new Date().getDate() + 1)),
     })
 
     inMemoryUserRepository.items.push(user)

@@ -11,4 +11,5 @@ export abstract class AuthTokenRepository {
   ) => Promise<AuthToken | null>
   abstract create: (token: AuthToken) => Promise<void>
   abstract remove({ userId, providerId }: Remove): Promise<void>
+  abstract upsert(token: AuthToken): Promise<void>
 }

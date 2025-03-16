@@ -19,4 +19,13 @@ export class InMemoryAuthTokenRepository implements AuthTokenRepository {
         token.providerId.toString() !== providerId
     )
   }
+
+  async upsert(token: AuthToken) {
+    this.items = this.items.filter(
+      t =>
+        t.userId.toString() !== token.userId.toString() &&
+        t.providerId.toString() !== token.providerId.toString()
+    )
+    this.items.push(token)
+  }
 }

@@ -21,12 +21,10 @@ export const makeAuthToken = (
       providerId: new UniqueEntityID(),
       userId: new UniqueEntityID(),
       refreshToken: faker.internet.jwt({
-        header: {
-          alg: 'RS256',
-        },
         payload: {
           sub: override.userId?.toString(),
-          exp: expiresIn || "7d",
+          exp: expiresIn || new Date(new Date().setDate(new Date().getDate() + 7)),
+          providerId: override.providerId?.toString(),
         },
       }),
       ...override,

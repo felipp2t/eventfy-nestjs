@@ -43,7 +43,7 @@ export class RefreshTokenUseCase {
 
     const currentDate = new Date()
 
-    if (isAfter(payload.exp, currentDate)) {
+    if (isAfter(currentDate, payload.exp)) {
       return left(new InvalidToken())
     }
 

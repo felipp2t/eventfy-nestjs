@@ -32,4 +32,19 @@ export class PrismaAuthTokenRepository implements AuthTokenRepository {
       where: { userId, providerId },
     })
   }
+
+  async upsert(token: AuthToken): Promise<void> {
+    const data = PrismaAuthTokenMapper.toPrisma(token)
+
+    await this.prisma.authToken.upsert({
+      where: {
+        userId_providerId: {
+          userId: token.userId.toString(),
+          providerId: token.providerId.toString(),
+        },
+      },
+      update: data,
+      create: data,
+    })
+  }
 }
