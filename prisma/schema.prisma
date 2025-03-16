@@ -38,6 +38,8 @@ model AuthToken {
   createdAt    DateTime     @default(now()) @map("created_at")
   user         User         @relation(fields: [userId], references: [id])
   provider     AuthProvider @relation(fields: [providerId], references: [id])
+
+  @@unique([userId, providerId])
 }
 
 enum AuthMethod {
