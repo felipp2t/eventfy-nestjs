@@ -12,7 +12,11 @@ export class InMemoryAuthTokenRepository implements AuthTokenRepository {
     this.items.push(token)
   }
 
-  async deleteByUserId(userId: string) {
-    this.items = this.items.filter(token => token.userId.toString() !== userId)
+  async remove({ userId, providerId }: { userId: string; providerId: string }) {
+    this.items = this.items.filter(
+      token =>
+        token.userId.toString() !== userId &&
+        token.providerId.toString() !== providerId
+    )
   }
 }

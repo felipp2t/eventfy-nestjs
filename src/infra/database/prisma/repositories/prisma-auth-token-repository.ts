@@ -24,9 +24,12 @@ export class PrismaAuthTokenRepository implements AuthTokenRepository {
     return PrismaAuthTokenMapper.toDomain(token)
   }
 
-  async deleteByUserId(userId: string): Promise<void> {
+  async remove({
+    userId,
+    providerId,
+  }: { userId: string; providerId: string }): Promise<void> {
     await this.prisma.authToken.deleteMany({
-      where: { userId },
+      where: { userId, providerId },
     })
   }
 }
