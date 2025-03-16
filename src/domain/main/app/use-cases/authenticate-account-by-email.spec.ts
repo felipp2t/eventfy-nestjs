@@ -1,4 +1,4 @@
-import { FakeEncrypter } from '@test/cryptography/fake-encrypter'
+import { FakeCrypto } from '@test/cryptography/fake-crypto'
 import { FakeHasher } from '@test/cryptography/fake-hasher'
 import { makeAuthProvider } from '@test/factories/make-auth-provider'
 import { makeAuthToken } from '@test/factories/make-auth-token'
@@ -14,7 +14,7 @@ type SutOutput = {
   inMemoryAuthProviderRepository: InMemoryAuthProviderRepository
   inMemoryAuthTokenRepository: InMemoryAuthTokenRepository
   fakeHasher: FakeHasher
-  encrypter: FakeEncrypter
+  encrypter: FakeCrypto
 }
 
 const makeSut = (): SutOutput => {
@@ -22,7 +22,7 @@ const makeSut = (): SutOutput => {
   const inMemoryAuthProviderRepository = new InMemoryAuthProviderRepository()
   const inMemoryAuthTokenRepository = new InMemoryAuthTokenRepository()
   const fakeHasher = new FakeHasher()
-  const encrypter = new FakeEncrypter()
+  const encrypter = new FakeCrypto()
   const sut = new AuthenticateAccountByEmailUseCase(
     inMemoryUserRepository,
     inMemoryAuthProviderRepository,
@@ -62,7 +62,6 @@ describe('Authenticate account by email', () => {
     const authToken = makeAuthToken({
       providerId: authProvider.id,
       userId: user.id,
-      days: 7,
     })
 
     inMemoryUserRepository.items.push(user)
