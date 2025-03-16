@@ -6,6 +6,7 @@ import { makeUser } from '@test/factories/make-user'
 import { InMemoryAuthProviderRepository } from '@test/in-memory/in-memory-auth-provider-repository'
 import { InMemoryAuthTokenRepository } from '@test/in-memory/in-memory-auth-token-repository'
 import { InMemoryUserRepository } from '@test/in-memory/in-memory-user-repository'
+import { getPastDate } from 'src/core/utils/get-past-date'
 import { Descrypter } from '../cryptography/decrypter'
 import { Encrypter } from '../cryptography/encrypter'
 import { InvalidToken } from './errors/invalid-token'
@@ -99,7 +100,7 @@ describe('Refresh Token', () => {
     const token = makeAuthToken({
       userId: user.id,
       providerId: provider.id,
-      expiresIn: new Date(new Date().setDate(new Date().getDate() - 0.1)),
+      expiresIn: getPastDate(0.1),
     })
 
     inMemoryUserRepository.items.push(user)

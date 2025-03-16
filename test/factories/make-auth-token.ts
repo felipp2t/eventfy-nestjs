@@ -7,6 +7,7 @@ import { PrismaAuthTokenMapper } from '@infra/database/prisma/mappers/prisma-tok
 import { PrismaService } from '@infra/database/prisma/prisma.service'
 import { Injectable } from '@nestjs/common'
 import { UniqueEntityID } from 'src/core/entities/unique-entity-id'
+import { getFutureDate } from 'src/core/utils/get-future-date'
 
 type MakeAuthToken = Partial<AuthTokenProps> & {
   expiresIn?: Date
@@ -23,7 +24,7 @@ export const makeAuthToken = (
       refreshToken: faker.internet.jwt({
         payload: {
           sub: override.userId?.toString(),
-          exp: expiresIn || new Date(new Date().setDate(new Date().getDate() + 7)),
+          exp: expiresIn || getFutureDate(7),
           providerId: override.providerId?.toString(),
         },
       }),
