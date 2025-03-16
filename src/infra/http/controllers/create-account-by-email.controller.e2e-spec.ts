@@ -9,7 +9,6 @@ describe('Create Account (E2E)', () => {
   let prisma: PrismaService
 
   beforeAll(async () => {
-
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule],
     }).compile()
@@ -37,5 +36,5 @@ describe('Create Account (E2E)', () => {
     })
 
     expect(userOnDatabase).toBeTruthy()
-  }, 60000)
+  })
 })

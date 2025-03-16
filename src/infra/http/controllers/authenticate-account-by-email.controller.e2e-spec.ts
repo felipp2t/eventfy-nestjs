@@ -41,7 +41,7 @@ describe('Create Account (E2E)', () => {
       password: await hash('123456', 8),
     })
 
-    await authProviderFactory.makeAuthProvider({
+    await authProviderFactory.makePrismaAuthProvider({
       userId: user.id,
       name: faker.person.fullName(),
       provider: AUTH_METHOD.EMAIL,
@@ -59,5 +59,5 @@ describe('Create Account (E2E)', () => {
         refreshToken: expect.any(String),
       }),
     })
-  }, 60000)
+  })
 })
