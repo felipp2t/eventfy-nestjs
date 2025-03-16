@@ -1,6 +1,6 @@
 import { AuthProviderRepository } from '@domain/main/app/repositories/auth-provider-repository'
 import { AuthProvider } from '@domain/main/enterprise/entities/auth-provider'
-import { AUTH_METHOD } from 'core/constants/auth-provider'
+import { AUTH_METHOD } from 'src/core/constants/auth-provider'
 
 export class InMemoryAuthProviderRepository implements AuthProviderRepository {
   public items: AuthProvider[] = []
