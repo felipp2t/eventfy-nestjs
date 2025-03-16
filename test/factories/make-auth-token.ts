@@ -38,7 +38,7 @@ export const makeAuthToken = (
 @Injectable()
 export class AuthTokenFactory {
   constructor(private prisma: PrismaService) {}
-  async makeAuthToken(data: MakeAuthToken): Promise<AuthToken> {
+  async makePrismaAuthToken(data: MakeAuthToken): Promise<AuthToken> {
     const authToken = makeAuthToken(data)
 
     await this.prisma.authToken.create({

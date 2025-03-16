@@ -28,7 +28,7 @@ export const makeAuthProvider = (
 export class AuthProviderFactory {
   constructor(private prisma: PrismaService) {}
 
-  async makeAuthProvider(
+  async makePrismaAuthProvider(
     data: Partial<AuthProviderProps> = {}
   ): Promise<AuthProvider> {
     const provider = makeAuthProvider(data)
