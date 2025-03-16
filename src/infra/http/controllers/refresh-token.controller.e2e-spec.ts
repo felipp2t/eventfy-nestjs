@@ -56,7 +56,7 @@ describe('Create Account (E2E)', () => {
     const refreshToken = await jwtEncrypter.encrypt({
       sub: user.id.toString(),
       providerId: authProvider.id.toString(),
-    })
+    }, "7d")
 
     const authToken = await authTokenFactory.makePrismaAuthToken({
       userId: user.id,
@@ -69,8 +69,6 @@ describe('Create Account (E2E)', () => {
       .send({
         refreshToken: authToken.refreshToken,
       })
-
-    console.log(response.body)
 
     expect(response.statusCode).toBe(201)
     expect(response.body).toEqual(

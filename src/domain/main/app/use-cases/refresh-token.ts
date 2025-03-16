@@ -38,12 +38,13 @@ export class RefreshTokenUseCase {
     const payload = await this.descrypter.decrypt<{
       sub: string
       providerId: string
-      exp: Date
+      exp: number
     }>(refreshToken)
 
+    const expDate = new Date(payload.exp * 1000)
     const currentDate = new Date()
 
-    if (isAfter(currentDate, payload.exp)) {
+    if (isAfter(currentDate, expDate)) {
       return left(new InvalidToken())
     }
 
