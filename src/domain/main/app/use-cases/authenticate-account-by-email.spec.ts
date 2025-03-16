@@ -1,4 +1,4 @@
-import { FakeEncrypter } from '@test/cryptography/fake-encrypter'
+import { FakeCrypto } from '@test/cryptography/fake-crypto'
 import { FakeHasher } from '@test/cryptography/fake-hasher'
 import { makeAuthProvider } from '@test/factories/make-auth-provider'
 import { makeAuthToken } from '@test/factories/make-auth-token'
@@ -8,31 +8,49 @@ import { InMemoryAuthTokenRepository } from '@test/in-memory/in-memory-auth-toke
 import { InMemoryUserRepository } from '@test/in-memory/in-memory-user-repository'
 import { AuthenticateAccountByEmailUseCase } from './authenticate-account-by-email'
 
-let inMemoryUserRepository: InMemoryUserRepository
-let inMemoryAuthProviderRepository: InMemoryAuthProviderRepository
-let inMemoryAuthTokenRepository: InMemoryAuthTokenRepository
-let fakeHasher: FakeHasher
-let encrypter: FakeEncrypter
+type SutOutput = {
+  sut: AuthenticateAccountByEmailUseCase
+  inMemoryUserRepository: InMemoryUserRepository
+  inMemoryAuthProviderRepository: InMemoryAuthProviderRepository
+  inMemoryAuthTokenRepository: InMemoryAuthTokenRepository
+  fakeHasher: FakeHasher
+  encrypter: FakeCrypto
+}
 
-let sut: AuthenticateAccountByEmailUseCase
+const makeSut = (): SutOutput => {
+  const inMemoryUserRepository = new InMemoryUserRepository()
+  const inMemoryAuthProviderRepository = new InMemoryAuthProviderRepository()
+  const inMemoryAuthTokenRepository = new InMemoryAuthTokenRepository()
+  const fakeHasher = new FakeHasher()
+  const encrypter = new FakeCrypto()
+  const sut = new AuthenticateAccountByEmailUseCase(
+    inMemoryUserRepository,
+    inMemoryAuthProviderRepository,
+    inMemoryAuthTokenRepository,
+    fakeHasher,
+    encrypter
+  )
+
+  return {
+    sut,
+    inMemoryUserRepository,
+    inMemoryAuthProviderRepository,
+    inMemoryAuthTokenRepository,
+    fakeHasher,
+    encrypter,
+  }
+}
 
 describe('Authenticate account by email', () => {
-  beforeEach(() => {
-    inMemoryUserRepository = new InMemoryUserRepository()
-    inMemoryAuthProviderRepository = new InMemoryAuthProviderRepository()
-    inMemoryAuthTokenRepository = new InMemoryAuthTokenRepository()
-    fakeHasher = new FakeHasher()
-    encrypter = new FakeEncrypter()
-    sut = new AuthenticateAccountByEmailUseCase(
+  it('should return an access token on success', async () => {
+    const {
+      sut,
+      fakeHasher,
       inMemoryUserRepository,
       inMemoryAuthProviderRepository,
       inMemoryAuthTokenRepository,
-      fakeHasher,
-      encrypter
-    )
-  })
+    } = makeSut()
 
-  it('should return an access token on success', async () => {
     const user = makeUser({
       password: await fakeHasher.hash('123456'),
     })
@@ -44,7 +62,6 @@ describe('Authenticate account by email', () => {
     const authToken = makeAuthToken({
       providerId: authProvider.id,
       userId: user.id,
-      days: 7,
     })
 
     inMemoryUserRepository.items.push(user)

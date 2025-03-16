@@ -1,9 +1,9 @@
 import { config } from 'dotenv'
 
+import { envSchema } from '@infra/env/env'
 import { PrismaClient } from '@prisma/client'
 import { execSync } from 'node:child_process'
 import { randomUUID } from 'node:crypto'
-import { envSchema } from '@infra/env/env'
 
 config({ path: '.env', override: true })
 config({ path: '.env.test', override: true })
@@ -30,8 +30,8 @@ beforeAll(async () => {
   const databaseURL = generateUniqueDatabaseURL(schemaId)
 
   process.env.DATABASE_URL = databaseURL
-  
-  execSync('pnpm prisma migrate deploy')
+
+  execSync('pnpm dlx prisma migrate deploy')
 })
 
 afterAll(async () => {

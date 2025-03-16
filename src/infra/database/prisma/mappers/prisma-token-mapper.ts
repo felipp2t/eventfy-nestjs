@@ -2,7 +2,7 @@ import { AuthToken } from '@domain/main/enterprise/entities/auth-token'
 import { AuthToken as PrismaAuthProvider } from '@prisma/client'
 import { UniqueEntityID } from 'src/core/entities/unique-entity-id'
 
-export class PrismaTokenMapper {
+export class PrismaAuthTokenMapper {
   static toDomain(token: PrismaAuthProvider): AuthToken {
     return AuthToken.create(
       {
