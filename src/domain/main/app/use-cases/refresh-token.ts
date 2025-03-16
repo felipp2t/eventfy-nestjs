@@ -1,6 +1,6 @@
 import { AuthToken } from '@domain/main/enterprise/entities/auth-token'
 import { Injectable } from '@nestjs/common'
-import { isBefore } from 'date-fns'
+import { isAfter } from 'date-fns'
 import { Either, left, right } from 'src/core/either'
 import { UniqueEntityID } from 'src/core/entities/unique-entity-id'
 import { Descrypter } from '../cryptography/decrypter'
@@ -42,9 +42,8 @@ export class RefreshTokenUseCase {
     }>(refreshToken)
 
     const currentDate = new Date()
-    console.log(isBefore(payload.exp, currentDate))
 
-    if (isBefore(payload.exp, currentDate)) {
+    if (isAfter(payload.exp, currentDate)) {
       return left(new InvalidToken())
     }
 
@@ -54,7 +53,6 @@ export class RefreshTokenUseCase {
       userId: payload.sub,
       providerId: payload.providerId,
     })
-    
 
     const newAccessToken = await this.encrypter.encrypt({
       sub: payload.sub,
