@@ -8,38 +8,40 @@ datasource db {
 }
 
 model User {
-  id        String         @id @default(uuid())
-  email     String         @unique
+  id        String    @id @default(uuid())
+  email     String    @unique
   password  String?
-  createdAt DateTime       @default(now()) @map("created_at")
-  providers AuthProvider[]
-  tokens    AuthToken[]
+  createdAt DateTime  @default(now()) @map("created_at")
+  accounts  Account[]
+  tokens    Session[]
 
   @@map("users")
 }
 
-model AuthProvider {
-  id        String      @id @default(uuid())
-  provider  AuthMethod
-  name      String      @unique
-  userId    String      @map("user_id")
-  createdAt DateTime    @default(now()) @map("created_at")
-  user      User        @relation(fields: [userId], references: [id])
-  token     AuthToken[]
+model Account {
+  id         String     @id @default(uuid())
+  provider   AuthMethod
+  providerId String?    @map("provider_id")
+  name       String
+  userId     String     @map("user_id")
+  createdAt  DateTime   @default(now()) @map("created_at")
+  user       User       @relation(fields: [userId], references: [id])
+  token      Session[]
 
-  @@map("providers")
+  @@map("accounts")
 }
 
-model AuthToken {
-  id           String       @id @default(uuid())
-  refreshToken String       @unique @map("refresh_token")
-  userId       String       @map("user_id")
-  providerId   String       @map("provider_id")
-  createdAt    DateTime     @default(now()) @map("created_at")
-  user         User         @relation(fields: [userId], references: [id])
-  provider     AuthProvider @relation(fields: [providerId], references: [id])
+model Session {
+  id           String   @id @default(uuid())
+  refreshToken String   @unique @map("refresh_token")
+  userId       String   @map("user_id")
+  accountId    String   @map("account_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+  user         User     @relation(fields: [userId], references: [id])
+  account      Account  @relation(fields: [accountId], references: [id])
 
-  @@unique([userId, providerId])
+  @@unique([userId, accountId])
+  @@map("sessions")
 }
 
 enum AuthMethod {
