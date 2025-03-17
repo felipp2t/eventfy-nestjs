@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common'
 
-import { Encrypter } from '@domain/main/app/cryptography/encrypter.js'
-import { HashComparer } from '@domain/main/app/cryptography/hash-comparer.js'
-import { HashGenerator } from '@domain/main/app/cryptography/hash-generator.js'
-import { EnvModule } from '@infra/env/env.module.js'
-import { EnvService } from '@infra/env/env.service.js'
-import { BcryptHasher } from './bcrypt-hasher.js'
-import { JwtEncrypter } from './jwt-encrypter.js'
-import { Descrypter } from '@domain/main/app/cryptography/decrypter.js'
+import { Encrypter } from '@domain/main/app/cryptography/encrypter'
+import { HashComparer } from '@domain/main/app/cryptography/hash-comparer'
+import { HashGenerator } from '@domain/main/app/cryptography/hash-generator'
+import { EnvModule } from '@infra/env/env.module'
+import { EnvService } from '@infra/env/env.service'
+import { BcryptHasher } from './bcrypt-hasher'
+import { JwtEncrypter } from './jwt-encrypter'
+import { Descrypter } from '@domain/main/app/cryptography/decrypter'
 
 @Module({
   imports: [EnvModule],

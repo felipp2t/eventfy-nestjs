@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common'
 import { APP_GUARD } from '@nestjs/core'
 import { JwtModule } from '@nestjs/jwt'
 import { PassportModule } from '@nestjs/passport'
-import { EnvModule } from '../env/env.module.js'
-import { EnvService } from '../env/env.service.js'
-import { JwtAuthGuard } from './jwt-auth.guard.js'
-import { JwtStrategy } from './jwt.strategy.js'
+import { EnvModule } from '../env/env.module'
+import { EnvService } from '../env/env.service'
+import { JwtAuthGuard } from './jwt-auth.guard'
+import { JwtStrategy } from './jwt.strategy'
 
 @Module({
   imports: [
