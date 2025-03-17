@@ -49,10 +49,8 @@ export class AuthenticateAccountByEmailController {
       }
     }
 
-    const { token } = result.value
-
     return {
-      token,
+      session: result.value.session,
     }
   }
 }

@@ -1,12 +1,12 @@
 import { WrongCredentials } from '@domain/main/app/use-cases/errors/wrong-credentials'
-import { AuthToken } from '@domain/main/enterprise/entities/auth-token'
+import { Session } from '@domain/main/enterprise/entities/session'
 import { Injectable } from '@nestjs/common'
 import { AUTH_METHOD } from 'src/core/constants/auth-provider'
 import { Either, left, right } from 'src/core/either'
 import { Encrypter } from '../cryptography/encrypter'
 import { HashComparer } from '../cryptography/hash-comparer'
-import { AuthProviderRepository } from '../repositories/auth-provider-repository'
-import { AuthTokenRepository } from '../repositories/auth-token-repository'
+import { AccountRepository } from '../repositories/account-repository'
+import { SessionRepository } from '../repositories/session-repository'
 import { UserRepository } from '../repositories/user-repository'
 
 interface AuthenticateAccountByEmailUseCaseRequest {
@@ -17,7 +17,7 @@ interface AuthenticateAccountByEmailUseCaseRequest {
 type AuthenticateAccountByEmailUseCaseResponse = Either<
   WrongCredentials,
   {
-    token: {
+    session: {
       accessToken: string
       refreshToken: string
     }
@@ -28,8 +28,8 @@ type AuthenticateAccountByEmailUseCaseResponse = Either<
 export class AuthenticateAccountByEmailUseCase {
   constructor(
     private userRepository: UserRepository,
-    private authProviderRepository: AuthProviderRepository,
-    private authTokenRepository: AuthTokenRepository,
+    private accountRepository: AccountRepository,
+    private sessionRepository: SessionRepository,
     private hashComparer: HashComparer,
     private encrypter: Encrypter
   ) {}
@@ -44,17 +44,13 @@ export class AuthenticateAccountByEmailUseCase {
       return left(new WrongCredentials())
     }
 
-    const provider = await this.authProviderRepository.findByUserId(
+    const accounts = await this.accountRepository.findByUserId(
       user.id.toString()
     )
 
-    if (!provider) {
-      return left(new WrongCredentials())
-    }
+    const account = accounts?.find(p => p.provider === AUTH_METHOD.EMAIL)
 
-    const emailProvider = provider.find(p => p.provider === AUTH_METHOD.EMAIL)
-
-    if (!emailProvider) {
+    if (!account) {
       return left(new WrongCredentials())
     }
 
@@ -75,21 +71,21 @@ export class AuthenticateAccountByEmailUseCase {
     const refreshToken = await this.encrypter.encrypt(
       {
         sub: user.id.toString(),
-        providerId: emailProvider.id,
+        providerId: account.id,
       },
       '7d'
     )
 
-    const token = AuthToken.create({
-      providerId: emailProvider.id,
+    const session = Session.create({
+      accountId: account.id,
       userId: user.id,
       refreshToken,
     })
 
-    await this.authTokenRepository.create(token)
+    await this.sessionRepository.create(session)
 
     return right({
-      token: {
+      session: {
         accessToken,
         refreshToken,
       },

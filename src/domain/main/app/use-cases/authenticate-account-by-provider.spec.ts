@@ -1,9 +1,9 @@
 import { FakeCrypto } from '@test/cryptography/fake-crypto'
-import { makeAuthProvider } from '@test/factories/make-auth-provider'
-import { makeAuthToken } from '@test/factories/make-auth-token'
+import { makeAccount } from '@test/factories/make-account'
+import { makeSession } from '@test/factories/make-session'
 import { makeUser } from '@test/factories/make-user'
-import { InMemoryAuthProviderRepository } from '@test/in-memory/in-memory-auth-provider-repository'
-import { InMemoryAuthTokenRepository } from '@test/in-memory/in-memory-auth-token-repository'
+import { InMemoryAccountRepository } from '@test/in-memory/in-memory-account-repository'
+import { InMemorySessionRepository } from '@test/in-memory/in-memory-session-repository'
 import { InMemoryUserRepository } from '@test/in-memory/in-memory-user-repository'
 import { AUTH_METHOD } from 'src/core/constants/auth-provider'
 import { AuthenticateAccountByProviderUseCase } from './authenticate-account-by-provider'
@@ -11,29 +11,29 @@ import { AuthenticateAccountByProviderUseCase } from './authenticate-account-by-
 type SutOutput = {
   sut: AuthenticateAccountByProviderUseCase
   inMemoryUserRepository: InMemoryUserRepository
-  inMemoryAuthProviderRepository: InMemoryAuthProviderRepository
-  inMemoryAuthTokenRepository: InMemoryAuthTokenRepository
+  inMemoryAccountRepository: InMemoryAccountRepository
+  inMemorySessionRepository: InMemorySessionRepository
   encrypter: FakeCrypto
 }
 
 const makeSut = (): SutOutput => {
   const inMemoryUserRepository = new InMemoryUserRepository()
-  const inMemoryAuthProviderRepository = new InMemoryAuthProviderRepository()
-  const inMemoryAuthTokenRepository = new InMemoryAuthTokenRepository()
+  const inMemoryAccountRepository = new InMemoryAccountRepository()
+  const inMemorySessionRepository = new InMemorySessionRepository()
   const encrypter = new FakeCrypto()
 
   const sut = new AuthenticateAccountByProviderUseCase(
     inMemoryUserRepository,
-    inMemoryAuthProviderRepository,
-    inMemoryAuthTokenRepository,
+    inMemoryAccountRepository,
+    inMemorySessionRepository,
     encrypter
   )
 
   return {
     sut,
     inMemoryUserRepository,
-    inMemoryAuthProviderRepository,
-    inMemoryAuthTokenRepository,
+    inMemoryAccountRepository,
+    inMemorySessionRepository,
     encrypter,
   }
 }
@@ -43,8 +43,8 @@ describe('Authenticate account by provider use case', () => {
     const {
       sut,
       inMemoryUserRepository,
-      inMemoryAuthProviderRepository,
-      inMemoryAuthTokenRepository,
+      inMemoryAccountRepository,
+      inMemorySessionRepository,
     } = makeSut()
 
     const response = await sut.execute({
@@ -55,47 +55,49 @@ describe('Authenticate account by provider use case', () => {
 
     expect(response.isRight()).toBeTruthy()
     expect(inMemoryUserRepository.items[0]).not.toBeNull()
-    expect(inMemoryAuthProviderRepository.items[0]).not.toBeNull()
-    expect(inMemoryAuthTokenRepository.items[0]).not.toBeNull()
+    expect(inMemoryAccountRepository.items[0]).not.toBeNull()
+    expect(inMemorySessionRepository.items[0]).not.toBeNull()
   })
 
   it('should authenticate an existing account', async () => {
     const {
       sut,
       inMemoryUserRepository,
-      inMemoryAuthProviderRepository,
-      inMemoryAuthTokenRepository,
+      inMemoryAccountRepository,
+      inMemorySessionRepository,
     } = makeSut()
 
     const user = makeUser()
-    const authProvider = makeAuthProvider({
+
+    const account = makeAccount({
       userId: user.id,
       provider: AUTH_METHOD.GOOGLE,
     })
-    const authToken = makeAuthToken({
+
+    const session = makeSession({
       userId: user.id,
-      providerId: authProvider.id,
+      accountId: account.id,
     })
 
     inMemoryUserRepository.items.push(user)
-    inMemoryAuthProviderRepository.items.push(authProvider)
-    inMemoryAuthTokenRepository.items.push(authToken)
+    inMemoryAccountRepository.items.push(account)
+    inMemorySessionRepository.items.push(session)
 
     const response = await sut.execute({
       email: user.email,
-      name: authProvider.name,
+      name: account.name,
       provider: AUTH_METHOD.GOOGLE,
     })
 
     expect(response.isRight()).toBeTruthy()
     if (response.isRight()) {
-      expect(authToken.refreshToken).not.toEqual(
-        response.value.token.refreshToken
+      expect(session.refreshToken).not.toEqual(
+        response.value.session.refreshToken
       )
     }
 
     expect(inMemoryUserRepository.items).toHaveLength(1)
-    expect(inMemoryAuthProviderRepository.items).toHaveLength(1)
-    expect(inMemoryAuthTokenRepository.items).toHaveLength(1)
+    expect(inMemoryAccountRepository.items).toHaveLength(1)
+    expect(inMemorySessionRepository.items).toHaveLength(1)
   })
 })

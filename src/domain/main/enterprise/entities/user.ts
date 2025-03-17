@@ -9,15 +9,15 @@ export interface UserProps {
 }
 
 export class User extends Entity<UserProps> {
-  get email() {
+  get email(): string {
     return this.props.email
   }
 
-  get password() {
+  get password(): string | undefined | null {
     return this.props.password
   }
 
-  get createdAt() {
+  get createdAt(): Date {
     return this.props.createdAt
   }
 

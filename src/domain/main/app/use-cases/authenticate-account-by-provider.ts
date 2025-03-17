@@ -1,12 +1,12 @@
-import { AuthProvider } from '@domain/main/enterprise/entities/auth-provider'
-import { AuthToken } from '@domain/main/enterprise/entities/auth-token'
+import { Account } from '@domain/main/enterprise/entities/account'
+import { Session } from '@domain/main/enterprise/entities/session'
 import { User } from '@domain/main/enterprise/entities/user'
 import { Injectable } from '@nestjs/common'
 import { AUTH_METHOD } from 'src/core/constants/auth-provider'
 import { Either, right } from 'src/core/either'
 import { Encrypter } from '../cryptography/encrypter'
-import { AuthProviderRepository } from '../repositories/auth-provider-repository'
-import { AuthTokenRepository } from '../repositories/auth-token-repository'
+import { AccountRepository } from '../repositories/account-repository'
+import { SessionRepository } from '../repositories/session-repository'
 import { UserRepository } from '../repositories/user-repository'
 
 interface AuthenticateAccountByProviderUseCaseRequest {
@@ -18,7 +18,7 @@ interface AuthenticateAccountByProviderUseCaseRequest {
 type AuthenticateAccountByProviderUseCaseResponse = Either<
   void,
   {
-    token: {
+    session: {
       accessToken: string
       refreshToken: string
     }
@@ -29,8 +29,8 @@ type AuthenticateAccountByProviderUseCaseResponse = Either<
 export class AuthenticateAccountByProviderUseCase {
   constructor(
     private userRepository: UserRepository,
-    private authProviderRepository: AuthProviderRepository,
-    private authTokenRepository: AuthTokenRepository,
+    private accountRepository: AccountRepository,
+    private sessinRepository: SessionRepository,
     private encrypter: Encrypter
   ) {}
 
@@ -46,42 +46,42 @@ export class AuthenticateAccountByProviderUseCase {
       await this.userRepository.create(user)
     }
 
-    let providerEntity =
-      (await this.authProviderRepository
-        .findByUserId(user.id.toString())
-        .then(providers => providers?.find(p => p.provider === provider))) ||
-      null
+    const accounts = await this.accountRepository.findByUserId(
+      user.id.toString()
+    )
 
-    if (!providerEntity) {
-      providerEntity = AuthProvider.create({
+    let account = accounts?.find(account => account.provider === provider)
+
+    if (!account) {
+      account = Account.create({
         provider,
         userId: user.id,
         name,
       })
-      await this.authProviderRepository.create(providerEntity)
+      await this.accountRepository.create(account)
     }
 
     return right({
-      token: await this._generateAuthTokens(user, providerEntity),
+      session: await this._generateAuthTokens(user, account),
     })
   }
 
-  private async _generateAuthTokens(user: User, provider: AuthProvider) {
+  private async _generateAuthTokens(user: User, account: Account) {
     const accessToken = await this.encrypter.encrypt({
       sub: user.id,
       email: user.email,
-      name: provider.name,
+      name: account.name,
     })
 
     const refreshToken = await this.encrypter.encrypt({ sub: user.id })
 
-    const token = AuthToken.create({
+    const session = Session.create({
       userId: user.id,
-      providerId: provider.id,
+      accountId: account.id,
       refreshToken,
     })
 
-    await this.authTokenRepository.upsert(token)
+    await this.sessinRepository.upsert(session)
 
     return {
       accessToken,

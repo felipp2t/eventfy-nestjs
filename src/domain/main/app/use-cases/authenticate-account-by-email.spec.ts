@@ -1,32 +1,32 @@
 import { FakeCrypto } from '@test/cryptography/fake-crypto'
 import { FakeHasher } from '@test/cryptography/fake-hasher'
-import { makeAuthProvider } from '@test/factories/make-auth-provider'
-import { makeAuthToken } from '@test/factories/make-auth-token'
+import { makeAccount } from '@test/factories/make-account'
+import { makeSession } from '@test/factories/make-session'
 import { makeUser } from '@test/factories/make-user'
-import { InMemoryAuthProviderRepository } from '@test/in-memory/in-memory-auth-provider-repository'
-import { InMemoryAuthTokenRepository } from '@test/in-memory/in-memory-auth-token-repository'
+import { InMemoryAccountRepository } from '@test/in-memory/in-memory-account-repository'
+import { InMemorySessionRepository } from '@test/in-memory/in-memory-session-repository'
 import { InMemoryUserRepository } from '@test/in-memory/in-memory-user-repository'
 import { AuthenticateAccountByEmailUseCase } from './authenticate-account-by-email'
 
 type SutOutput = {
   sut: AuthenticateAccountByEmailUseCase
   inMemoryUserRepository: InMemoryUserRepository
-  inMemoryAuthProviderRepository: InMemoryAuthProviderRepository
-  inMemoryAuthTokenRepository: InMemoryAuthTokenRepository
+  inMemoryAccountRepository: InMemoryAccountRepository
+  inMemorySessionRepository: InMemorySessionRepository
   fakeHasher: FakeHasher
   encrypter: FakeCrypto
 }
 
 const makeSut = (): SutOutput => {
   const inMemoryUserRepository = new InMemoryUserRepository()
-  const inMemoryAuthProviderRepository = new InMemoryAuthProviderRepository()
-  const inMemoryAuthTokenRepository = new InMemoryAuthTokenRepository()
+  const inMemoryAccountRepository = new InMemoryAccountRepository()
+  const inMemorySessionRepository = new InMemorySessionRepository()
   const fakeHasher = new FakeHasher()
   const encrypter = new FakeCrypto()
   const sut = new AuthenticateAccountByEmailUseCase(
     inMemoryUserRepository,
-    inMemoryAuthProviderRepository,
-    inMemoryAuthTokenRepository,
+    inMemoryAccountRepository,
+    inMemorySessionRepository,
     fakeHasher,
     encrypter
   )
@@ -34,39 +34,39 @@ const makeSut = (): SutOutput => {
   return {
     sut,
     inMemoryUserRepository,
-    inMemoryAuthProviderRepository,
-    inMemoryAuthTokenRepository,
+    inMemoryAccountRepository,
+    inMemorySessionRepository,
     fakeHasher,
     encrypter,
   }
 }
 
 describe('Authenticate account by email', () => {
-  it('should return an access token on success', async () => {
+  it('should return an session on success', async () => {
     const {
       sut,
       fakeHasher,
       inMemoryUserRepository,
-      inMemoryAuthProviderRepository,
-      inMemoryAuthTokenRepository,
+      inMemoryAccountRepository,
+      inMemorySessionRepository,
     } = makeSut()
 
     const user = makeUser({
       password: await fakeHasher.hash('123456'),
     })
 
-    const authProvider = makeAuthProvider({
+    const account = makeAccount({
       userId: user.id,
     })
 
-    const authToken = makeAuthToken({
-      providerId: authProvider.id,
+    const session = makeSession({
+      accountId: account.id,
       userId: user.id,
     })
 
     inMemoryUserRepository.items.push(user)
-    inMemoryAuthProviderRepository.items.push(authProvider)
-    inMemoryAuthTokenRepository.items.push(authToken)
+    inMemoryAccountRepository.items.push(account)
+    inMemorySessionRepository.items.push(session)
 
     const response = await sut.execute({
       email: user.email,
@@ -74,14 +74,14 @@ describe('Authenticate account by email', () => {
     })
 
     expect(response.isRight()).toBe(true)
-    expect(inMemoryAuthTokenRepository.items[0].userId).toEqual(
+    expect(inMemorySessionRepository.items[0].userId).toEqual(
       inMemoryUserRepository.items[0].id
     )
-    expect(inMemoryAuthTokenRepository.items[0].providerId).toEqual(
-      inMemoryAuthProviderRepository.items[0].id
+    expect(inMemorySessionRepository.items[0].accountId).toEqual(
+      inMemoryAccountRepository.items[0].id
     )
     if (response.isRight()) {
-      expect(response.value.token).toEqual({
+      expect(response.value.session).toEqual({
         accessToken: expect.any(String),
         refreshToken: expect.any(String),
       })
