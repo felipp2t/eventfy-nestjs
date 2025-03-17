@@ -1,2 +1,2 @@
-export const getFutureDate = (days: number): Date =>
-  new Date(new Date().setDate(new Date().getDate() + days))
+export const getFutureDate = (days: number): number =>
+  Math.floor(new Date().setDate(new Date().getDate() + days) / 1000)
