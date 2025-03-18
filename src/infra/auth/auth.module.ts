@@ -4,6 +4,7 @@ import { JwtModule } from '@nestjs/jwt'
 import { PassportModule } from '@nestjs/passport'
 import { EnvModule } from '../env/env.module'
 import { EnvService } from '../env/env.service'
+import { GoogleStategy } from './google.strategy'
 import { JwtAuthGuard } from './jwt-auth.guard'
 import { JwtStrategy } from './jwt.strategy'
 
@@ -28,6 +29,7 @@ import { JwtStrategy } from './jwt.strategy'
   ],
   providers: [
     JwtStrategy,
+    GoogleStategy,
     EnvService,
     {
       provide: APP_GUARD,
