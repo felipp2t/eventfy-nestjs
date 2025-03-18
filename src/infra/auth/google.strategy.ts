@@ -10,7 +10,7 @@ export class GoogleStategy extends PassportStrategy(Strategy) {
     super({
       clientID: envService.get('GOOGLE_CLIENT_ID'),
       clientSecret: envService.get('GOOGLE_CLIENT_SECRET'),
-      callbackURL: `${envService.get('BASE_URL')}/auth/google/callback`,
+      callbackURL: `${envService.get('BASE_URL')}/accounts/google/callback`,
       scope: ['profile', 'email'],
     })
   }

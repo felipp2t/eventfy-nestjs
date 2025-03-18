@@ -4,10 +4,10 @@ import { GoogleCallbackPayload } from '@infra/auth/payloads/google-callback-payl
 import { Public } from '@infra/auth/public'
 import { Controller, Get, UseGuards } from '@nestjs/common'
 
-@Controller('auth/google')
+@Controller('accounts')
 @Public()
 export class AuthenticateAccountByGoogleController {
-  @Get()
+  @Get('/google')
   @UseGuards(GoogleAuthGuard)
   async handle() {}
 
