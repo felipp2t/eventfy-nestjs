@@ -7,7 +7,7 @@ import { Module } from '@nestjs/common'
 import { AuthenticateAccountByEmailController } from './controllers/authenticate-account-by-email.controller'
 import { CreateAccountController } from './controllers/create-account-by-email.controller'
 import { RefreshTokenController } from './controllers/refresh-token.controller'
-import { AuthenticateAccountByGoogleController } from './controllers/authenticate-account-by-google.controller'
+import { AuthenticateAccountByGoogleController } from './controllers/providers/authenticate-account-by-google.controller'
 
 @Module({
   imports: [DatabaseModule, CryptographyModule],

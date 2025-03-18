@@ -1,7 +1,8 @@
+import { CurrentUser } from '@infra/auth/current-user-decorator'
 import { GoogleAuthGuard } from '@infra/auth/google-auth.guard'
+import { GoogleCallbackPayload } from '@infra/auth/payloads/google-callback-payload'
 import { Public } from '@infra/auth/public'
-import { Controller, Get, Req, UseGuards } from '@nestjs/common'
-import { Request } from 'express'
+import { Controller, Get, UseGuards } from '@nestjs/common'
 
 @Controller('auth/google')
 @Public()
@@ -12,7 +13,7 @@ export class AuthenticateAccountByGoogleController {
 
   @Get('callback')
   @UseGuards(GoogleAuthGuard)
-  async handleCallback(@Req() request: Request) {
-    console.log(request.user)
+  async handleCallback(@CurrentUser() user: GoogleCallbackPayload) {
+    return { user }
   }
 }

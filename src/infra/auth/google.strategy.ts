@@ -1,9 +1,8 @@
 import { EnvService } from '@infra/env/env.service'
 import { Injectable } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
-
 import { Profile, Strategy } from 'passport-google-oauth20'
-import { tokenPayloadSchema } from './user-payload'
+import { googleCallbackPayloadSchema } from './payloads/google-callback-payload'
 
 @Injectable()
 export class GoogleStategy extends PassportStrategy(Strategy) {
@@ -17,6 +16,11 @@ export class GoogleStategy extends PassportStrategy(Strategy) {
   }
 
   async validate(_: unknown, __: unknown, profile: Profile) {
-    return tokenPayloadSchema.parse({ sub: profile._json.sub })
+    console.log(profile._json)
+    return googleCallbackPayloadSchema.parse({
+      sub: profile._json.sub,
+      email: profile._json.email,
+      name: profile._json.name,
+    })
   }
 }
