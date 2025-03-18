@@ -1,6 +1,6 @@
 import { CurrentUser } from '@infra/auth/current-user-decorator'
-import { GoogleAuthGuard } from '@infra/auth/google-auth.guard'
 import { GoogleCallbackPayload } from '@infra/auth/payloads/google-callback-payload'
+import { GoogleAuthGuard } from '@infra/auth/providers/google/google-auth.guard'
 import { Public } from '@infra/auth/public'
 import { Controller, Get, UseGuards } from '@nestjs/common'
 

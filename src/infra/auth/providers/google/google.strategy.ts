@@ -1,8 +1,8 @@
+import { googleCallbackPayloadSchema } from '@infra/auth/payloads/google-callback-payload'
 import { EnvService } from '@infra/env/env.service'
 import { Injectable } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 import { Profile, Strategy } from 'passport-google-oauth20'
-import { googleCallbackPayloadSchema } from './payloads/google-callback-payload'
 
 @Injectable()
 export class GoogleStategy extends PassportStrategy(Strategy) {

@@ -1,7 +1,7 @@
+import { IS_PUBLIC_KEY } from '@infra/auth/public'
 import { ExecutionContext, Injectable } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { AuthGuard } from '@nestjs/passport'
-import { IS_PUBLIC_KEY } from './public'
 
 @Injectable()
 export class GoogleAuthGuard extends AuthGuard('google') {
