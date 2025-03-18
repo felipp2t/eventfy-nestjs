@@ -5,6 +5,8 @@ export const envSchema = z.object({
   PORT: z.coerce.number().optional().default(3333),
   JWT_PRIVATE_KEY: z.string(),
   JWT_PUBLIC_KEY: z.string(),
+  GOOGLE_CLIENT_ID: z.string(),
+  GOOGLE_CLIENT_SECRET: z.string(),
   DATABASE_URL: z.string().url(),
 })
 
