@@ -11,12 +11,13 @@ import { UserRepository } from '../repositories/user-repository'
 
 interface AuthenticateAccountByProviderUseCaseRequest {
   provider: AUTH_METHOD.GITHUB | AUTH_METHOD.GOOGLE
+  sub: string
   email: string
   name: string
 }
 
 type AuthenticateAccountByProviderUseCaseResponse = Either<
-  void,
+  undefined,
   {
     session: {
       accessToken: string
@@ -35,6 +36,7 @@ export class AuthenticateAccountByProviderUseCase {
   ) {}
 
   async execute({
+    sub,
     email,
     name,
     provider,
@@ -46,18 +48,19 @@ export class AuthenticateAccountByProviderUseCase {
       await this.userRepository.create(user)
     }
 
-    const accounts = await this.accountRepository.findByUserId(
-      user.id.toString()
-    )
-
-    let account = accounts?.find(account => account.provider === provider)
+    let account = await this.accountRepository.findByProviderId({
+      provider,
+      providerId: sub,
+    })
 
     if (!account) {
       account = Account.create({
         provider,
+        providerId: sub,
         userId: user.id,
         name,
       })
+
       await this.accountRepository.create(account)
     }
 

@@ -1,6 +1,8 @@
-import { AccountRepository } from '@domain/main/app/repositories/account-repository'
+import {
+  AccountRepository,
+  FindByProviderId,
+} from '@domain/main/app/repositories/account-repository'
 import { Account } from '@domain/main/enterprise/entities/account'
-import { AUTH_METHOD } from 'src/core/constants/auth-provider'
 
 export class InMemoryAccountRepository implements AccountRepository {
   public items: Account[] = []
@@ -13,8 +15,16 @@ export class InMemoryAccountRepository implements AccountRepository {
     return this.items.filter(account => account.userId.toString() === userId)
   }
 
-  async findByProvider(provider: AUTH_METHOD): Promise<Account[] | null> {
-    return this.items.filter(account => account.provider === provider) || null
+  async findByProviderId({
+    provider,
+    providerId,
+  }: FindByProviderId): Promise<Account | null> {
+    return (
+      this.items.find(
+        account =>
+          account.provider === provider && account.providerId === providerId
+      ) || null
+    )
   }
 
   async create(account: Account): Promise<void> {

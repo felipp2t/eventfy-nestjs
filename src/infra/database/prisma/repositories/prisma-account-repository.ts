@@ -1,7 +1,9 @@
-import { AccountRepository } from '@domain/main/app/repositories/account-repository'
+import {
+  AccountRepository,
+  FindByProviderId,
+} from '@domain/main/app/repositories/account-repository'
 import { Account } from '@domain/main/enterprise/entities/account'
 import { Injectable } from '@nestjs/common'
-import { AUTH_METHOD } from 'src/core/constants/auth-provider'
 import { PrismaAccountMapper } from '../mappers/prisma-account-mapper'
 import { PrismaService } from '../prisma.service'
 
@@ -24,19 +26,25 @@ export class PrismaAccountRepository implements AccountRepository {
       where: { userId },
     })
 
-    if (!account) return null
-
     return account.map(PrismaAccountMapper.toDomain)
   }
 
-  async findByProvider(provider: AUTH_METHOD): Promise<Account[] | null> {
-    const user = await this.prisma.account.findMany({
-      where: { name: provider },
+  async findByProviderId({
+    provider,
+    providerId,
+  }: FindByProviderId): Promise<Account | null> {
+    const account = await this.prisma.account.findUnique({
+      where: {
+        provider_providerId: {
+          provider,
+          providerId,
+        },
+      },
     })
 
-    if (!user) return null
+    if (!account) return null
 
-    return user.map(u => PrismaAccountMapper.toDomain(u))
+    return PrismaAccountMapper.toDomain(account)
   }
 
   async create(account: Account): Promise<void> {

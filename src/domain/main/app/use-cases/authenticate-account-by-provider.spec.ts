@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker'
 import { FakeCrypto } from '@test/cryptography/fake-crypto'
 import { makeAccount } from '@test/factories/make-account'
 import { makeSession } from '@test/factories/make-session'
@@ -51,6 +52,7 @@ describe('Authenticate account by provider use case', () => {
       email: 'johndoe@gmail.com',
       name: 'John Doe',
       provider: AUTH_METHOD.GOOGLE,
+      sub: faker.string.uuid(),
     })
 
     expect(response.isRight()).toBeTruthy()
@@ -72,6 +74,7 @@ describe('Authenticate account by provider use case', () => {
     const account = makeAccount({
       userId: user.id,
       provider: AUTH_METHOD.GOOGLE,
+      providerId: faker.string.uuid(),
     })
 
     const session = makeSession({
@@ -87,6 +90,7 @@ describe('Authenticate account by provider use case', () => {
       email: user.email,
       name: account.name,
       provider: AUTH_METHOD.GOOGLE,
+      sub: account.providerId!,
     })
 
     expect(response.isRight()).toBeTruthy()
