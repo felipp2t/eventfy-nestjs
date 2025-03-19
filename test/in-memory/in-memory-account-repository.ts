@@ -1,6 +1,6 @@
 import {
   AccountRepository,
-  FindByProviderId,
+  FindByProviderAndId,
 } from '@domain/main/app/repositories/account-repository'
 import { Account } from '@domain/main/enterprise/entities/account'
 
@@ -15,10 +15,10 @@ export class InMemoryAccountRepository implements AccountRepository {
     return this.items.filter(account => account.userId.toString() === userId)
   }
 
-  async findByProviderId({
+  async findByProviderAndId({
     provider,
     providerId,
-  }: FindByProviderId): Promise<Account | null> {
+  }: FindByProviderAndId): Promise<Account | null> {
     return (
       this.items.find(
         account =>

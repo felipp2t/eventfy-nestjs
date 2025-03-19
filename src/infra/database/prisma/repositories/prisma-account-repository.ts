@@ -1,6 +1,6 @@
 import {
   AccountRepository,
-  FindByProviderId,
+  FindByProviderAndId,
 } from '@domain/main/app/repositories/account-repository'
 import { Account } from '@domain/main/enterprise/entities/account'
 import { Injectable } from '@nestjs/common'
@@ -29,10 +29,10 @@ export class PrismaAccountRepository implements AccountRepository {
     return account.map(PrismaAccountMapper.toDomain)
   }
 
-  async findByProviderId({
+  async findByProviderAndId({
     provider,
     providerId,
-  }: FindByProviderId): Promise<Account | null> {
+  }: FindByProviderAndId): Promise<Account | null> {
     const account = await this.prisma.account.findUnique({
       where: {
         provider_providerId: {

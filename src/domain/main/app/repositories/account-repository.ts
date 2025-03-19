@@ -1,7 +1,7 @@
 import { Account } from '@domain/main/enterprise/entities/account'
 import { AUTH_METHOD } from 'src/core/constants/auth-provider'
 
-export interface FindByProviderId {
+export interface FindByProviderAndId {
   providerId: string
   provider: AUTH_METHOD.GOOGLE | AUTH_METHOD.GITHUB
 }
@@ -9,9 +9,9 @@ export interface FindByProviderId {
 export abstract class AccountRepository {
   abstract findById: (id: string) => Promise<Account | null>
   abstract findByUserId: (userId: string) => Promise<Account[] | null>
-  abstract findByProviderId: ({
+  abstract findByProviderAndId: ({
     provider,
     providerId,
-  }: FindByProviderId) => Promise<Account | null>
+  }: FindByProviderAndId) => Promise<Account | null>
   abstract create: (account: Account) => Promise<void>
 }

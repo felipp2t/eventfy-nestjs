@@ -48,7 +48,7 @@ export class AuthenticateAccountByProviderUseCase {
       await this.userRepository.create(user)
     }
 
-    let account = await this.accountRepository.findByProviderId({
+    let account = await this.accountRepository.findByProviderAndId({
       provider,
       providerId: sub,
     })
