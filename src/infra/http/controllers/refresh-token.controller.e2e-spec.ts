@@ -6,8 +6,8 @@ import { DatabaseModule } from '@infra/database/database.module'
 import { PrismaService } from '@infra/database/prisma/prisma.service'
 import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
-import { AuthProviderFactory } from '@test/factories/make-auth-provider'
-import { AuthTokenFactory } from '@test/factories/make-auth-token'
+import { AccountFactory } from '@test/factories/make-account'
+import { SessionFactory } from '@test/factories/make-session'
 import { UserFactory } from '@test/factories/make-user'
 import request from 'supertest'
 
@@ -15,8 +15,8 @@ describe('Create Account (E2E)', () => {
   let app: INestApplication
   let prisma: PrismaService
   let userFactory: UserFactory
-  let authProviderFactory: AuthProviderFactory
-  let authTokenFactory: AuthTokenFactory
+  let authProviderFactory: AccountFactory
+  let authTokenFactory: SessionFactory
   let bcryptHasher: BcryptHasher
   let jwtEncrypter: JwtEncrypter
 
@@ -25,8 +25,8 @@ describe('Create Account (E2E)', () => {
       imports: [AppModule, DatabaseModule, CryptographyModule],
       providers: [
         UserFactory,
-        AuthProviderFactory,
-        AuthTokenFactory,
+        AccountFactory,
+        SessionFactory,
         BcryptHasher,
         JwtEncrypter,
       ],
@@ -34,8 +34,8 @@ describe('Create Account (E2E)', () => {
 
     app = moduleRef.createNestApplication()
     userFactory = moduleRef.get(UserFactory)
-    authProviderFactory = moduleRef.get(AuthProviderFactory)
-    authTokenFactory = moduleRef.get(AuthTokenFactory)
+    authProviderFactory = moduleRef.get(AccountFactory)
+    authTokenFactory = moduleRef.get(SessionFactory)
     bcryptHasher = moduleRef.get(BcryptHasher)
     jwtEncrypter = moduleRef.get(JwtEncrypter)
 
@@ -49,33 +49,34 @@ describe('Create Account (E2E)', () => {
       password: await bcryptHasher.hash('123456'),
     })
 
-    const authProvider = await authProviderFactory.makePrismaAuthProvider({
+    const account = await authProviderFactory.makePrismaAccount({
       userId: user.id,
     })
 
-    const refreshToken = await jwtEncrypter.encrypt({
-      sub: user.id.toString(),
-      providerId: authProvider.id.toString(),
-    })
+    const refreshToken = await jwtEncrypter.encrypt(
+      {
+        sub: user.id.toString(),
+        accountId: account.id.toString(),
+      },
+      '7d'
+    )
 
-    const authToken = await authTokenFactory.makePrismaAuthToken({
+    const session = await authTokenFactory.makePrismaSession({
       userId: user.id,
-      providerId: authProvider.id,
+      accountId: account.id,
       refreshToken,
     })
 
     const response = await request(app.getHttpServer())
       .post('/auth/refresh')
       .send({
-        refreshToken: authToken.refreshToken,
+        refreshToken: session.refreshToken,
       })
-
-    console.log(response.body)
 
     expect(response.statusCode).toBe(201)
     expect(response.body).toEqual(
       expect.objectContaining({
-        token: expect.objectContaining({
+        session: expect.objectContaining({
           accessToken: expect.any(String),
           refreshToken: expect.any(String),
         }),

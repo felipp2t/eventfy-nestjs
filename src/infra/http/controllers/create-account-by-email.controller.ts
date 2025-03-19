@@ -1,4 +1,4 @@
-import { CreateAccountUseCase } from '@domain/main/app/use-cases/create-account-by-email.js'
+import { CreateAccountUseCase } from '@domain/main/app/use-cases/create-account-by-email'
 import { Public } from '@infra/auth/public'
 import { ZodValidationPipe } from '@infra/http/pipes/zod-validation-pipe'
 

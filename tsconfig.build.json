@@ -2,9 +2,14 @@
   "extends": "./tsconfig.json",
   "exclude": ["node_modules", "test", "dist", "**/*spec.ts"],
   "compilerOptions": {
-    "baseUrl": "./src",
+    "outDir": "./dist",
+    "rootDir": "./",
+    "baseUrl": "./",
     "paths": {
-      "@chore/*": ["chore/*"]
+      "@chore/*": ["src/chore/*"],
+      "@domain/*": ["src/domain/*"],
+      "@infra/*": ["src/infra/*"],
+      "@test/*": ["test/*"]
     }
   }
 }

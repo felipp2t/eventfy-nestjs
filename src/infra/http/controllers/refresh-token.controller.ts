@@ -44,7 +44,7 @@ export class RefreshTokenController {
     }
 
     return {
-      token: result.value.token,
+      session: result.value.session,
     }
   }
 }

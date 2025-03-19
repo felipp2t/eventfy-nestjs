@@ -1,11 +1,11 @@
-import { AuthToken } from '@domain/main/enterprise/entities/auth-token'
+import { Session } from '@domain/main/enterprise/entities/session'
 import { Injectable } from '@nestjs/common'
 import { isAfter } from 'date-fns'
 import { Either, left, right } from 'src/core/either'
 import { UniqueEntityID } from 'src/core/entities/unique-entity-id'
 import { Descrypter } from '../cryptography/decrypter'
 import { Encrypter } from '../cryptography/encrypter'
-import { AuthTokenRepository } from '../repositories/auth-token-repository'
+import { SessionRepository } from '../repositories/session-repository'
 import { UserRepository } from '../repositories/user-repository'
 import { InvalidToken } from './errors/invalid-token'
 
@@ -16,7 +16,7 @@ interface RefreshTokenUseCaseRequest {
 type RefreshTokenUseCaseResponse = Either<
   InvalidToken,
   {
-    token: {
+    session: {
       accessToken: string
       refreshToken: string
     }
@@ -27,7 +27,7 @@ type RefreshTokenUseCaseResponse = Either<
 export class RefreshTokenUseCase {
   constructor(
     private userRepository: UserRepository,
-    private authTokenRepository: AuthTokenRepository,
+    private sessionRepository: SessionRepository,
     private descrypter: Descrypter,
     private encrypter: Encrypter
   ) {}
@@ -37,21 +37,22 @@ export class RefreshTokenUseCase {
   }: RefreshTokenUseCaseRequest): Promise<RefreshTokenUseCaseResponse> {
     const payload = await this.descrypter.decrypt<{
       sub: string
-      providerId: string
-      exp: Date
+      accountId: string
+      exp: number
     }>(refreshToken)
 
+    const expDate = new Date(payload.exp * 1000)
     const currentDate = new Date()
 
-    if (isAfter(payload.exp, currentDate)) {
+    if (isAfter(currentDate, expDate)) {
       return left(new InvalidToken())
     }
 
     const user = await this.userRepository.findById(payload.sub)
 
-    await this.authTokenRepository.remove({
+    await this.sessionRepository.remove({
       userId: payload.sub,
-      providerId: payload.providerId,
+      accountId: payload.accountId,
     })
 
     const newAccessToken = await this.encrypter.encrypt({
@@ -62,21 +63,21 @@ export class RefreshTokenUseCase {
     const newRefreshToken = await this.encrypter.encrypt(
       {
         sub: payload.sub,
-        providerId: payload.providerId,
+        accountId: payload.accountId,
       },
       '7d'
     )
 
-    const token = AuthToken.create({
-      providerId: new UniqueEntityID(payload.providerId),
+    const session = Session.create({
+      accountId: new UniqueEntityID(payload.accountId),
       userId: new UniqueEntityID(payload.sub),
       refreshToken,
     })
 
-    await this.authTokenRepository.create(token)
+    await this.sessionRepository.create(session)
 
     return right({
-      token: {
+      session: {
         accessToken: newAccessToken,
         refreshToken: newRefreshToken,
       },

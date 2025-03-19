@@ -2,35 +2,35 @@ import { Entity } from 'src/core/entities/entity'
 import { UniqueEntityID } from 'src/core/entities/unique-entity-id'
 import { Optional } from 'src/core/types/optional'
 
-export interface AuthTokenProps {
+export interface SessionProps {
   refreshToken: string
   userId: UniqueEntityID
-  providerId: UniqueEntityID
+  accountId: UniqueEntityID
   createdAt: Date
 }
 
-export class AuthToken extends Entity<AuthTokenProps> {
-  get refreshToken() {
+export class Session extends Entity<SessionProps> {
+  get refreshToken(): string {
     return this.props.refreshToken
   }
 
-  get userId() {
+  get userId(): UniqueEntityID {
     return this.props.userId
   }
 
-  get providerId() {
-    return this.props.providerId
+  get accountId(): UniqueEntityID {
+    return this.props.accountId
   }
 
-  get createdAt() {
+  get createdAt(): Date {
     return this.props.createdAt
   }
 
   static create(
-    props: Optional<AuthTokenProps, 'createdAt'>,
+    props: Optional<SessionProps, 'createdAt'>,
     id?: UniqueEntityID
   ) {
-    return new AuthToken(
+    return new Session(
       {
         ...props,
         createdAt: props.createdAt ?? new Date(),

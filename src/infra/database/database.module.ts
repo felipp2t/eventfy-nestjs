@@ -1,24 +1,24 @@
-import { AuthProviderRepository } from '@domain/main/app/repositories/auth-provider-repository'
-import { AuthTokenRepository } from '@domain/main/app/repositories/auth-token-repository'
+import { AccountRepository } from '@domain/main/app/repositories/account-repository'
+import { SessionRepository } from '@domain/main/app/repositories/session-repository'
 import { UserRepository } from '@domain/main/app/repositories/user-repository'
 import { Module } from '@nestjs/common'
 import { PrismaService } from './prisma/prisma.service'
-import { PrismaAuthProviderRepository } from './prisma/repositories/prisma-auth-provider-repository'
-import { PrismaAuthTokenRepository } from './prisma/repositories/prisma-auth-token-repository'
+import { PrismaAccountRepository } from './prisma/repositories/prisma-account-repository'
+import { PrismaSessionRepository } from './prisma/repositories/prisma-session-repository'
 import { PrismaUserRepository } from './prisma/repositories/prisma-user-repository'
 
 @Module({
   providers: [
     PrismaService,
     { provide: UserRepository, useClass: PrismaUserRepository },
-    { provide: AuthProviderRepository, useClass: PrismaAuthProviderRepository },
-    { provide: AuthTokenRepository, useClass: PrismaAuthTokenRepository },
+    { provide: AccountRepository, useClass: PrismaAccountRepository },
+    { provide: SessionRepository, useClass: PrismaSessionRepository },
   ],
   exports: [
     PrismaService,
     UserRepository,
-    AuthProviderRepository,
-    AuthTokenRepository,
+    AccountRepository,
+    SessionRepository,
   ],
 })
 export class DatabaseModule {}
