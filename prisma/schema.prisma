@@ -28,6 +28,7 @@ model Account {
   user       User       @relation(fields: [userId], references: [id])
   token      Session[]
 
+  @@unique([provider, providerId])
   @@map("accounts")
 }
 
