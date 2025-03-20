@@ -1,10 +1,11 @@
 import { Entity } from 'src/core/entities/entity'
 import { UniqueEntityID } from 'src/core/entities/unique-entity-id'
 import { Optional } from 'src/core/types/optional'
+import { Password } from './value-objects/password'
 
 export interface UserProps {
   email: string
-  password?: string | null
+  password: Password | null
   createdAt: Date
 }
 
@@ -13,11 +14,11 @@ export class User extends Entity<UserProps> {
     return this.props.email
   }
 
-  get password(): string | undefined | null {
+  get password(): Password | undefined | null {
     return this.props.password
   }
 
-  set password(password: string) {
+  set password(password: Password | null) {
     this.props.password = password
   }
 
@@ -25,7 +26,10 @@ export class User extends Entity<UserProps> {
     return this.props.createdAt
   }
 
-  static create(props: Optional<UserProps, 'createdAt'>, id?: UniqueEntityID) {
+  static create(
+    props: Optional<UserProps, 'createdAt' | 'password'>,
+    id?: UniqueEntityID
+  ) {
     return new User(
       {
         ...props,
