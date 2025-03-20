@@ -8,10 +8,10 @@ import { AUTH_METHOD } from 'src/core/constants/auth-provider'
 import { Descrypter } from '../cryptography/decrypter'
 import { Encrypter } from '../cryptography/encrypter'
 import { HashGenerator } from '../cryptography/hash-generator'
+import { InvalidPasswordConfirmation } from './errors/invalid-password-confirmation'
 import { InvalidToken } from './errors/invalid-token'
 import { UserNotFound } from './errors/user-not-found'
 import { RecoveryPasswordUseCase } from './recovery-password'
-import { InvalidPasswordConfirmation } from './errors/invalid-password-confirmation'
 
 type SutOutput = {
   inMemoryUserRepository: InMemoryUserRepository
@@ -55,13 +55,10 @@ describe('Recovery password', () => {
       inMemoryUserRepository,
       inMemoryAccountRepository,
     } = makeSut()
-    const user = makeUser({
-      password: await hashGenerator.hash('123456'),
-    })
 
-    const account = makeAccount({
-      userId: user.id,
-    })
+    const user = makeUser()
+
+    const account = makeAccount({ userId: user.id })
 
     inMemoryUserRepository.items.push(user)
     inMemoryAccountRepository.items.push(account)
@@ -91,9 +88,8 @@ describe('Recovery password', () => {
       inMemoryUserRepository,
       inMemoryAccountRepository,
     } = makeSut()
-    const user = makeUser({
-      password: await hashGenerator.hash('123456'),
-    })
+    
+    const user = makeUser()
 
     const account = makeAccount({
       userId: user.id,
@@ -129,9 +125,8 @@ describe('Recovery password', () => {
       inMemoryUserRepository,
       inMemoryAccountRepository,
     } = makeSut()
-    const user = makeUser({
-      password: await hashGenerator.hash('123456'),
-    })
+
+    const user = makeUser()
 
     const account = makeAccount({ userId: user.id })
 
