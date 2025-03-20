@@ -1,4 +1,7 @@
-import { UserRepository } from '@domain/main/app/repositories/user-repository'
+import {
+  UpdatePassword,
+  UserRepository,
+} from '@domain/main/app/repositories/user-repository'
 import { User } from '@domain/main/enterprise/entities/user'
 
 export class InMemoryUserRepository implements UserRepository {
@@ -14,5 +17,13 @@ export class InMemoryUserRepository implements UserRepository {
 
   async create(user: User): Promise<void> {
     this.items.push(user)
+  }
+
+  async updatePassword({ userId, password }: UpdatePassword): Promise<void> {
+    const user = this.items.find(user => user.id.toString() === userId)
+
+    if (!user) return
+
+    user.password = password
   }
 }

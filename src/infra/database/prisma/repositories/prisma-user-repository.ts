@@ -1,4 +1,7 @@
-import { UserRepository } from '@domain/main/app/repositories/user-repository.js'
+import {
+  UpdatePassword,
+  UserRepository,
+} from '@domain/main/app/repositories/user-repository.js'
 import { User } from '@domain/main/enterprise/entities/user.js'
 import { Injectable } from '@nestjs/common'
 import { PrismaUserMapper } from '../mappers/prisma-user-mapper.js'
@@ -32,5 +35,12 @@ export class PrismaUserRepository implements UserRepository {
     const data = PrismaUserMapper.toPrisma(user)
 
     await this.prisma.user.create({ data })
+  }
+
+  async updatePassword({ userId, password }: UpdatePassword): Promise<void> {
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { password },
+    })
   }
 }

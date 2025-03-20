@@ -6,6 +6,11 @@ export interface FindByProviderAndId {
   provider: AUTH_METHOD.GOOGLE | AUTH_METHOD.GITHUB
 }
 
+export interface FindByUserIdAndProvider {
+  userId: string
+  provider: AUTH_METHOD.EMAIL
+}
+
 export abstract class AccountRepository {
   abstract findById: (id: string) => Promise<Account | null>
   abstract findByUserId: (userId: string) => Promise<Account[] | null>
@@ -13,5 +18,9 @@ export abstract class AccountRepository {
     provider,
     providerId,
   }: FindByProviderAndId) => Promise<Account | null>
+  abstract findByUserIdAndProvider: ({
+    userId,
+    provider,
+  }: FindByUserIdAndProvider) => Promise<Account | null>
   abstract create: (account: Account) => Promise<void>
 }

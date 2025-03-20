@@ -1,6 +1,7 @@
 import {
   AccountRepository,
   FindByProviderAndId,
+  FindByUserIdAndProvider,
 } from '@domain/main/app/repositories/account-repository'
 import { Account } from '@domain/main/enterprise/entities/account'
 import { Injectable } from '@nestjs/common'
@@ -39,6 +40,22 @@ export class PrismaAccountRepository implements AccountRepository {
           provider,
           providerId,
         },
+      },
+    })
+
+    if (!account) return null
+
+    return PrismaAccountMapper.toDomain(account)
+  }
+
+  async findByUserIdAndProvider({
+    userId,
+    provider,
+  }: FindByUserIdAndProvider): Promise<Account | null> {
+    const account = await this.prisma.account.findFirst({
+      where: {
+        userId,
+        provider,
       },
     })
 
