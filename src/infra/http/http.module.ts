@@ -9,6 +9,8 @@ import { AuthenticateAccountByEmailController } from './controllers/authenticate
 import { CreateAccountController } from './controllers/create-account-by-email.controller'
 import { AuthenticateAccountByGoogleController } from './controllers/providers/google/authenticate-account-by-google.controller'
 import { RefreshTokenController } from './controllers/refresh-token.controller'
+import { ValidateEmailController } from './controllers/validate-email.controller'
+import { ValidateEmailUseCase } from '@domain/main/app/use-cases/validate-email'
 
 @Module({
   imports: [DatabaseModule, CryptographyModule],
@@ -17,12 +19,14 @@ import { RefreshTokenController } from './controllers/refresh-token.controller'
     AuthenticateAccountByEmailController,
     RefreshTokenController,
     AuthenticateAccountByGoogleController,
+    ValidateEmailController,
   ],
   providers: [
     CreateAccountUseCase,
     AuthenticateAccountByEmailUseCase,
     RefreshTokenUseCase,
     AuthenticateAccountByProviderUseCase,
+    ValidateEmailUseCase
   ],
 })
 export class HttpModule {}
