@@ -1,7 +1,6 @@
 import { faker } from '@faker-js/faker'
 import { AppModule } from '@infra/app.module'
 import { DatabaseModule } from '@infra/database/database.module'
-import { PrismaService } from '@infra/database/prisma/prisma.service'
 import { INestApplication } from '@nestjs/common'
 import { Test } from '@nestjs/testing'
 import { AccountFactory } from '@test/factories/make-account'
@@ -19,12 +18,7 @@ describe('Create Account (E2E)', () => {
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule, DatabaseModule],
-      providers: [
-        UserFactory,
-        AccountFactory,
-        SessionFactory,
-        PrismaService,
-      ],
+      providers: [UserFactory, AccountFactory, SessionFactory],
     }).compile()
 
     app = moduleRef.createNestApplication()
