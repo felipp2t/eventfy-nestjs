@@ -1,14 +1,12 @@
-import { AuthProvider } from '@domain/main/enterprise/entities/auth-provider'
-import { AuthToken } from '@domain/main/enterprise/entities/auth-token'
+import { EmailAlreadyInUse } from '@domain/main/app/use-cases/errors/email-already-in-use'
+import { Account } from '@domain/main/enterprise/entities/account'
 import { User } from '@domain/main/enterprise/entities/user'
 import { Injectable } from '@nestjs/common'
 import { AUTH_METHOD } from 'src/core/constants/auth-provider'
 import { Either, left, right } from 'src/core/either'
-import { EmailAlreadyInUse } from 'src/core/errors/errors/email-already-in-use'
 import { Encrypter } from '../cryptography/encrypter'
 import { HashGenerator } from '../cryptography/hash-generator'
-import { AuthProviderRepository } from '../repositories/auth-provider-repository'
-import { AuthTokenRepository } from '../repositories/auth-token-repository'
+import { AccountRepository } from '../repositories/account-repository'
 import { UserRepository } from '../repositories/user-repository'
 
 interface CreateAccountUseCaseRequest {
@@ -17,20 +15,13 @@ interface CreateAccountUseCaseRequest {
   password: string
 }
 
-type CreateAccountUseCaseResponse = Either<
-  EmailAlreadyInUse,
-  {
-    accessToken: string
-    refreshToken: string
-  }
->
+type CreateAccountUseCaseResponse = Either<EmailAlreadyInUse, object>
 
 @Injectable()
 export class CreateAccountUseCase {
   constructor(
     private readonly userRepository: UserRepository,
-    private readonly providerRepository: AuthProviderRepository,
-    private readonly tokenRepository: AuthTokenRepository,
+    private readonly accountRepository: AccountRepository,
     private hashGenerator: HashGenerator,
     private encrypter: Encrypter
   ) {}
@@ -50,72 +41,34 @@ export class CreateAccountUseCase {
         password: hashedPassword,
       })
 
-      const newProvider = AuthProvider.create({
+      const newAccount = Account.create({
         name,
         userId: newUser.id,
         provider: AUTH_METHOD.EMAIL,
       })
 
-      const accessToken = await this.encrypter.encrypt({
-        sub: newUser.id.toString(),
-        email: newUser.email,
-      })
-
-      const refreshToken = await this.encrypter.encrypt({
-        sub: newUser.id.toString(),
-      })
-
-      const newToken = AuthToken.create({
-        providerId: newProvider.id,
-        userId: newUser.id,
-        refreshToken,
-      })
-
       await this.userRepository.create(newUser)
-      await this.providerRepository.create(newProvider)
-      await this.tokenRepository.create(newToken)
+      await this.accountRepository.create(newAccount)
 
-      return right({
-        accessToken,
-        refreshToken,
-      })
+      return right({})
     }
 
-    const providers = await this.providerRepository.findByUserId(
+    const accounts = await this.accountRepository.findByUserId(
       user.id.toString()
     )
 
-    if (providers?.some(p => p.provider === AUTH_METHOD.EMAIL)) {
+    if (accounts?.some(p => p.provider === AUTH_METHOD.EMAIL)) {
       return left(new EmailAlreadyInUse())
     }
 
-    const newProvider = AuthProvider.create({
+    const account = Account.create({
       name,
       userId: user.id,
       provider: AUTH_METHOD.EMAIL,
     })
 
-    const accessToken = await this.encrypter.encrypt({
-      sub: user.id.toString(),
-      email: user.email,
-    })
+    await this.accountRepository.create(account)
 
-    const refreshToken = await this.encrypter.encrypt({
-      sub: user.id.toString(),
-    })
-
-    const newToken = AuthToken.create({
-      providerId: newProvider.id,
-      userId: user.id,
-      refreshToken,
-    })
-
-    await this.providerRepository.create(newProvider)
-    await this.tokenRepository.create(newToken)
-
-    return right({
-      accessToken,
-      refreshToken,
-    })
+    return right({})
   }
 }

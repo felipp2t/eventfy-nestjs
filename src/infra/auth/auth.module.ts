@@ -2,10 +2,11 @@ import { Module } from '@nestjs/common'
 import { APP_GUARD } from '@nestjs/core'
 import { JwtModule } from '@nestjs/jwt'
 import { PassportModule } from '@nestjs/passport'
-import { EnvModule } from '../env/env.module.js'
-import { EnvService } from '../env/env.service.js'
-import { JwtAuthGuard } from './jwt-auth.guard.js'
-import { JwtStrategy } from './jwt.strategy.js'
+import { EnvModule } from '../env/env.module'
+import { EnvService } from '../env/env.service'
+import { JwtAuthGuard } from './jwt-auth.guard'
+import { JwtStrategy } from './jwt.strategy'
+import { GoogleStategy } from './providers/google/google.strategy'
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { JwtStrategy } from './jwt.strategy.js'
         const publicKey = env.get('JWT_PUBLIC_KEY')
 
         return {
-          signOptions: { algorithm: 'RS256', expiresIn: '1d' },
+          signOptions: { algorithm: 'RS256' },
           privateKey: Buffer.from(privateKey, 'base64'),
           publicKey: Buffer.from(publicKey, 'base64'),
         }
@@ -28,6 +29,7 @@ import { JwtStrategy } from './jwt.strategy.js'
   ],
   providers: [
     JwtStrategy,
+    GoogleStategy,
     EnvService,
     {
       provide: APP_GUARD,

@@ -1,35 +1,43 @@
-import { EmailAlreadyInUse } from 'src/core/errors/errors/email-already-in-use'
-import { CreateAccountUseCase } from './create-account-by-email'
-import { InMemoryUserRepository } from '@test/in-memory/in-memory-user-repository'
-import { InMemoryAuthProviderRepository } from '@test/in-memory/in-memory-auth-provider-repository'
-import { InMemoryAuthTokenRepository } from '@test/in-memory/in-memory-auth-token-repository'
+import { EmailAlreadyInUse } from '@domain/main/app/use-cases/errors/email-already-in-use'
+import { FakeCrypto } from '@test/cryptography/fake-crypto'
 import { FakeHasher } from '@test/cryptography/fake-hasher'
-import { FakeEncrypter } from '@test/cryptography/fake-encrypter'
+import { InMemoryAccountRepository } from '@test/in-memory/in-memory-account-repository'
+import { InMemoryUserRepository } from '@test/in-memory/in-memory-user-repository'
+import { CreateAccountUseCase } from './create-account-by-email'
 
-let inMemoryUserRepository: InMemoryUserRepository
-let inMemoryAuthProviderRepository: InMemoryAuthProviderRepository
-let inMemoryAuthTokenRepository: InMemoryAuthTokenRepository
-let hashGenerator: FakeHasher
-let encrypter: FakeEncrypter
-let sut: CreateAccountUseCase
+type SutOutput = {
+  sut: CreateAccountUseCase
+  inMemoryUserRepository: InMemoryUserRepository
+  inMemoryAccountRepository: InMemoryAccountRepository
+  hashGenerator: FakeHasher
+  encrypter: FakeCrypto
+}
+
+const makeSut = (): SutOutput => {
+  const inMemoryUserRepository = new InMemoryUserRepository()
+  const inMemoryAccountRepository = new InMemoryAccountRepository()
+  const hashGenerator = new FakeHasher()
+  const encrypter = new FakeCrypto()
+  const sut = new CreateAccountUseCase(
+    inMemoryUserRepository,
+    inMemoryAccountRepository,
+    hashGenerator,
+    encrypter
+  )
+
+  return {
+    sut,
+    inMemoryUserRepository,
+    inMemoryAccountRepository,
+    hashGenerator,
+    encrypter,
+  }
+}
 
 describe('Create Account', () => {
-  beforeEach(() => {
-    inMemoryUserRepository = new InMemoryUserRepository()
-    inMemoryAuthProviderRepository = new InMemoryAuthProviderRepository()
-    inMemoryAuthTokenRepository = new InMemoryAuthTokenRepository()
-    hashGenerator = new FakeHasher()
-    encrypter = new FakeEncrypter()
-    sut = new CreateAccountUseCase(
-      inMemoryUserRepository,
-      inMemoryAuthProviderRepository,
-      inMemoryAuthTokenRepository,
-      hashGenerator,
-      encrypter
-    )
-  })
-
   it('should create a new account', async () => {
+    const { sut, inMemoryUserRepository } = makeSut()
+
     const result = await sut.execute({
       name: 'John Doe',
       email: 'johndoe@example.com',
@@ -37,16 +45,12 @@ describe('Create Account', () => {
     })
 
     expect(result.isRight()).toBe(true)
-    expect(result.value).toEqual({
-      accessToken: expect.any(String),
-      refreshToken: expect.any(String),
-    })
-    expect(inMemoryAuthTokenRepository.items[0].userId.toValue()).toEqual(
-      inMemoryUserRepository.items[0].id.toValue()
-    )
+    expect(inMemoryUserRepository.items).toHaveLength(1)
   })
 
   it("shouldn't create a new account if the email is already in use", async () => {
+    const { sut } = makeSut()
+
     await sut.execute({
       name: 'John Doe',
       email: 'johndoe@example.com',

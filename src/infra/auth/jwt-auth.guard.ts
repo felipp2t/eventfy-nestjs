@@ -10,10 +10,15 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   }
 
   canActivate(context: ExecutionContext) {
+    const request = context.switchToHttp().getRequest()
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
     ])
+
+    if (request.path.startsWith('/api/auth/google')) {
+      return new (AuthGuard('google'))().canActivate(context)
+    }
 
     if (isPublic) {
       return true

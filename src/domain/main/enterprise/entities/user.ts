@@ -2,22 +2,22 @@ import { Entity } from 'src/core/entities/entity'
 import { UniqueEntityID } from 'src/core/entities/unique-entity-id'
 import { Optional } from 'src/core/types/optional'
 
-interface UserProps {
+export interface UserProps {
   email: string
   password?: string | null
   createdAt: Date
 }
 
 export class User extends Entity<UserProps> {
-  get email() {
+  get email(): string {
     return this.props.email
   }
 
-  get password() {
+  get password(): string | undefined | null {
     return this.props.password
   }
 
-  get createdAt() {
+  get createdAt(): Date {
     return this.props.createdAt
   }
 
