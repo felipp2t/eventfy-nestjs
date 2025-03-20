@@ -1,2 +1,3 @@
 export const getPastDate = (days: number): number =>
-  Math.floor(new Date().setDate(new Date().getDate() - days) / 1000)
+  Math.floor((Date.now() - days * 24 * 60 * 60 * 1000) / 1000)
+
