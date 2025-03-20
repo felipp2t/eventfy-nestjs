@@ -15,8 +15,8 @@ describe('Create Account (E2E)', () => {
   let app: INestApplication
   let prisma: PrismaService
   let userFactory: UserFactory
-  let authProviderFactory: AccountFactory
-  let authTokenFactory: SessionFactory
+  let accountFactory: AccountFactory
+  let sessionFactory: SessionFactory
   let bcryptHasher: BcryptHasher
   let jwtEncrypter: JwtEncrypter
 
@@ -34,8 +34,8 @@ describe('Create Account (E2E)', () => {
 
     app = moduleRef.createNestApplication()
     userFactory = moduleRef.get(UserFactory)
-    authProviderFactory = moduleRef.get(AccountFactory)
-    authTokenFactory = moduleRef.get(SessionFactory)
+    accountFactory = moduleRef.get(AccountFactory)
+    sessionFactory = moduleRef.get(SessionFactory)
     bcryptHasher = moduleRef.get(BcryptHasher)
     jwtEncrypter = moduleRef.get(JwtEncrypter)
 
@@ -49,7 +49,7 @@ describe('Create Account (E2E)', () => {
       password: await bcryptHasher.hash('123456'),
     })
 
-    const account = await authProviderFactory.makePrismaAccount({
+    const account = await accountFactory.makePrismaAccount({
       userId: user.id,
     })
 
@@ -61,7 +61,7 @@ describe('Create Account (E2E)', () => {
       '7d'
     )
 
-    const session = await authTokenFactory.makePrismaSession({
+    const session = await sessionFactory.makePrismaSession({
       userId: user.id,
       accountId: account.id,
       refreshToken,
