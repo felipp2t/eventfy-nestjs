@@ -30,7 +30,6 @@ export class AuthenticateAccountByEmailUseCase {
     private userRepository: UserRepository,
     private accountRepository: AccountRepository,
     private sessionRepository: SessionRepository,
-    private hashComparer: HashComparer,
     private encrypter: Encrypter
   ) {}
 
@@ -54,12 +53,7 @@ export class AuthenticateAccountByEmailUseCase {
       return left(new WrongCredentials())
     }
 
-    const isPasswordValid = await this.hashComparer.compare(
-      password,
-      user.password!
-    )
-
-    if (!isPasswordValid) {
+    if (!user.password?.compare(password)) {
       return left(new WrongCredentials())
     }
 

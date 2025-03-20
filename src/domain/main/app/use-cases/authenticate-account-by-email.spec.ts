@@ -1,3 +1,4 @@
+import { Password } from '@domain/main/enterprise/entities/value-objects/password'
 import { FakeCrypto } from '@test/cryptography/fake-crypto'
 import { FakeHasher } from '@test/cryptography/fake-hasher'
 import { makeAccount } from '@test/factories/make-account'
@@ -13,7 +14,6 @@ type SutOutput = {
   inMemoryUserRepository: InMemoryUserRepository
   inMemoryAccountRepository: InMemoryAccountRepository
   inMemorySessionRepository: InMemorySessionRepository
-  fakeHasher: FakeHasher
   encrypter: FakeCrypto
 }
 
@@ -27,7 +27,6 @@ const makeSut = (): SutOutput => {
     inMemoryUserRepository,
     inMemoryAccountRepository,
     inMemorySessionRepository,
-    fakeHasher,
     encrypter
   )
 
@@ -36,7 +35,6 @@ const makeSut = (): SutOutput => {
     inMemoryUserRepository,
     inMemoryAccountRepository,
     inMemorySessionRepository,
-    fakeHasher,
     encrypter,
   }
 }
@@ -45,15 +43,13 @@ describe('Authenticate account by email', () => {
   it('should return an session on success', async () => {
     const {
       sut,
-      fakeHasher,
       inMemoryUserRepository,
       inMemoryAccountRepository,
       inMemorySessionRepository,
     } = makeSut()
 
-    const user = makeUser({
-      password: await fakeHasher.hash('123456'),
-    })
+    const password = await Password.create('#Usuario1')
+    const user = makeUser({ password })
 
     const account = makeAccount({
       userId: user.id,
@@ -70,7 +66,7 @@ describe('Authenticate account by email', () => {
 
     const response = await sut.execute({
       email: user.email,
-      password: '123456',
+      password: '#Usuario1',
     })
 
     expect(response.isRight()).toBe(true)
