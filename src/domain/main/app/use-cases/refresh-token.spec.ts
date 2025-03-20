@@ -6,6 +6,7 @@ import { makeUser } from '@test/factories/make-user'
 import { InMemoryAccountRepository } from '@test/in-memory/in-memory-account-repository'
 import { InMemorySessionRepository } from '@test/in-memory/in-memory-session-repository'
 import { InMemoryUserRepository } from '@test/in-memory/in-memory-user-repository'
+import { getFutureDate } from 'src/core/utils/get-future-date'
 import { getPastDate } from 'src/core/utils/get-past-date'
 import { Descrypter } from '../cryptography/decrypter'
 import { Encrypter } from '../cryptography/encrypter'
@@ -50,6 +51,7 @@ describe('Refresh Token', () => {
   it('should return a new refresh token', async () => {
     const {
       sut,
+      encrypter,
       inMemoryUserRepository,
       inMemoryAccountRepository,
       inMemorySessionRepository,
@@ -66,13 +68,19 @@ describe('Refresh Token', () => {
       accountId: account.id,
     })
 
+    const payload = {
+      sub: session.userId.toString(),
+      accountId: session.accountId.toString(),
+      exp: getFutureDate(7),
+    }
+
+    const refreshToken = await encrypter.encrypt(payload)
+
     inMemoryUserRepository.items.push(user)
     inMemoryAccountRepository.items.push(account)
     inMemorySessionRepository.items.push(session)
 
-    const result = await sut.execute({
-      refreshToken: session.refreshToken,
-    })
+    const result = await sut.execute({ refreshToken })
 
     expect(result.isRight()).toBeTruthy()
     if (result.isRight()) {
@@ -87,6 +95,7 @@ describe('Refresh Token', () => {
       inMemoryUserRepository,
       inMemoryAccountRepository,
       inMemorySessionRepository,
+      encrypter,
     } = makeSut()
 
     const user = makeUser({ password: faker.internet.password() })
@@ -99,11 +108,18 @@ describe('Refresh Token', () => {
       expiresIn: getPastDate(1),
     })
 
+    const payload = {
+      sub: session.userId.toString(),
+      accountId: session.accountId.toString(),
+      exp: getPastDate(1),
+    }
+
+    const refreshToken = await encrypter.encrypt(payload)
+
     inMemoryUserRepository.items.push(user)
     inMemoryAccountRepository.items.push(account)
     inMemorySessionRepository.items.push(session)
 
-    const { refreshToken } = session
     const result = await sut.execute({ refreshToken })
 
     expect(result.isLeft()).toBeTruthy()
