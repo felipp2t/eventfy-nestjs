@@ -54,16 +54,16 @@ describe('Create Account', () => {
     await sut.execute({
       name: 'John Doe',
       email: 'johndoe@example.com',
-      password: '123456',
+      password: '#Usuario1',
     })
 
     const result = await sut.execute({
       name: 'Alice',
       email: 'johndoe@example.com',
-      password: '123456',
+      password: '#Usuario1',
     })
 
-    expect(result.isLeft()).toBe(true)
+    expect(result.isLeft()).toBeTruthy()
     expect(result.value).toBeInstanceOf(EmailAlreadyInUse)
   })
 })

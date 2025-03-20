@@ -1,6 +1,7 @@
 import { EmailAlreadyInUse } from '@domain/main/app/use-cases/errors/email-already-in-use'
 import { Account } from '@domain/main/enterprise/entities/account'
 import { User } from '@domain/main/enterprise/entities/user'
+import { Password } from '@domain/main/enterprise/entities/value-objects/password'
 import { Injectable } from '@nestjs/common'
 import { AUTH_METHOD } from 'src/core/constants/auth-provider'
 import { Either, left, right } from 'src/core/either'
@@ -34,11 +35,9 @@ export class CreateAccountUseCase {
     const user = await this.userRepository.findByEmail(email)
 
     if (!user) {
-      const hashedPassword = await this.hashGenerator.hash(password)
-
       const newUser = User.create({
         email,
-        password: hashedPassword,
+        password: await Password.create(password),
       })
 
       const newAccount = Account.create({
