@@ -4,7 +4,7 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./",
-    "baseUrl": "./",
+    "baseUrl": ".",
     "paths": {
       "@chore/*": ["src/chore/*"],
       "@domain/*": ["src/domain/*"],
