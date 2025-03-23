@@ -15,12 +15,10 @@ export const makeSession = (
   return Session.create(
     {
       accountId: new UniqueEntityID(),
-      userId: new UniqueEntityID(),
       refreshToken: faker.internet.jwt({
         payload: {
-          sub: override.userId?.toString(),
+          sub: override.accountId?.toString(),
           exp: expiresIn || getFutureDate(7),
-          accountId: override.accountId?.toString(),
         },
       }),
       ...override,
