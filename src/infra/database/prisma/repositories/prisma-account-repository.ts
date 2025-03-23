@@ -1,7 +1,6 @@
 import {
   AccountRepository,
-  FindByProviderAndId,
-  FindByUserIdAndProvider,
+  UpdatePasswordParams,
 } from '@domain/main/app/repositories/account-repository'
 import { Account } from '@domain/main/enterprise/entities/account'
 import { Injectable } from '@nestjs/common'
@@ -17,56 +16,30 @@ export class PrismaAccountRepository implements AccountRepository {
       where: { id },
     })
 
-    if (!account) return null
-
-    return PrismaAccountMapper.toDomain(account)
+    return account ? PrismaAccountMapper.toDomain(account) : null
   }
 
-  async findByUserId(userId: string): Promise<Account[] | null> {
-    const account = await this.prisma.account.findMany({
-      where: { userId },
-    })
-
-    return account.map(PrismaAccountMapper.toDomain)
-  }
-
-  async findByProviderAndId({
-    provider,
-    providerId,
-  }: FindByProviderAndId): Promise<Account | null> {
+  async findByEmail(email: string): Promise<Account | null> {
     const account = await this.prisma.account.findUnique({
-      where: {
-        provider_providerId: {
-          provider,
-          providerId,
-        },
-      },
+      where: { email },
     })
 
-    if (!account) return null
-
-    return PrismaAccountMapper.toDomain(account)
-  }
-
-  async findByUserIdAndProvider({
-    userId,
-    provider,
-  }: FindByUserIdAndProvider): Promise<Account | null> {
-    const account = await this.prisma.account.findFirst({
-      where: {
-        userId,
-        provider,
-      },
-    })
-
-    if (!account) return null
-
-    return PrismaAccountMapper.toDomain(account)
+    return account ? PrismaAccountMapper.toDomain(account) : null
   }
 
   async create(account: Account): Promise<void> {
-    const data = PrismaAccountMapper.toPrisma(account)
+    await this.prisma.account.create({
+      data: PrismaAccountMapper.toPrisma(account),
+    })
+  }
 
-    await this.prisma.account.create({ data })
+  async updatePassword({
+    accountId,
+    password,
+  }: UpdatePasswordParams): Promise<void> {
+    await this.prisma.account.update({
+      where: { id: accountId },
+      data: { password },
+    })
   }
 }
