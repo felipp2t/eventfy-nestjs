@@ -2,18 +2,28 @@ import { AUTH_METHOD } from 'src/core/constants/auth-provider'
 import { Entity } from 'src/core/entities/entity'
 import { UniqueEntityID } from 'src/core/entities/unique-entity-id'
 import { Optional } from 'src/core/types/optional'
+import { Password } from './value-objects/password'
 
 export interface AccountProps {
-  userId: UniqueEntityID
+  email: string
+  password: Password | null
   name: string
   provider: AUTH_METHOD
-  providerId?: string | null
+  providerId: string | null
   createdAt: Date
 }
 
 export class Account extends Entity<AccountProps> {
-  get userId(): UniqueEntityID {
-    return this.props.userId
+  get email(): string {
+    return this.props.email
+  }
+
+  get password(): Password | null {
+    return this.props.password
+  }
+
+  set password(password: Password | null) {
+    this.props.password = password
   }
 
   get name(): string {
@@ -33,12 +43,13 @@ export class Account extends Entity<AccountProps> {
   }
 
   static create(
-    props: Optional<AccountProps, 'createdAt'>,
+    props: Optional<AccountProps, 'createdAt' | 'password' | 'providerId'>,
     id?: UniqueEntityID
   ) {
     return new Account(
       {
         ...props,
+        password: props.password ?? null,
         providerId: props.providerId ?? null,
         createdAt: props.createdAt ?? new Date(),
       },
