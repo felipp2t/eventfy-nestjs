@@ -1,15 +1,15 @@
 import { EmailAlreadyInUse } from '@domain/main/app/use-cases/errors/email-already-in-use'
 import { InMemoryAccountRepository } from '@test/in-memory/in-memory-account-repository'
-import { CreateAccountUseCase } from './create-account-by-email'
+import { CreateAccountByEmailUseCase } from './create-account-by-email'
 
 type SutOutput = {
-  sut: CreateAccountUseCase
+  sut: CreateAccountByEmailUseCase
   inMemoryAccountRepository: InMemoryAccountRepository
 }
 
 const makeSut = (): SutOutput => {
   const inMemoryAccountRepository = new InMemoryAccountRepository()
-  const sut = new CreateAccountUseCase(inMemoryAccountRepository)
+  const sut = new CreateAccountByEmailUseCase(inMemoryAccountRepository)
 
   return {
     sut,

@@ -15,7 +15,7 @@ interface CreateAccountUseCaseRequest {
 type CreateAccountUseCaseResponse = Either<EmailAlreadyInUse, null>
 
 @Injectable()
-export class CreateAccountUseCase {
+export class CreateAccountByEmailUseCase {
   constructor(private readonly accountRepository: AccountRepository) {}
 
   async execute({
