@@ -9,7 +9,13 @@
     "target": "ES2021",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
+    "baseUrl": ".",
+    "paths": {
+      "@chore/*": ["src/chore/*"],
+      "@domain/*": ["src/domain/*"],
+      "@infra/*": ["src/infra/*"],
+      "@test/*": ["test/*"]
+    },
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,
