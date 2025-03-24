@@ -1,4 +1,5 @@
 import { Session } from '@domain/main/enterprise/entities/session'
+import { Injectable } from '@nestjs/common'
 import { Either, left, right } from 'src/core/types/either'
 import { Encrypter } from '../cryptography/encrypter'
 import { AccountRepository } from '../repositories/account-repository'
@@ -20,11 +21,12 @@ type AuthenticateByEmailResponse = Either<
   }
 >
 
+@Injectable()
 export class AuthenticateByEmailUseCase {
   constructor(
     private readonly accountRepository: AccountRepository,
     private readonly sessionRepository: SessionRepository,
-    private readonly encrypter: Encrypter,
+    private readonly encrypter: Encrypter
   ) {}
 
   async execute({
