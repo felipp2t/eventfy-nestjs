@@ -8,43 +8,29 @@ import { PrismaService } from '../prisma.service.js'
 export class PrismaSessionRepository implements SessionRepository {
   constructor(private prisma: PrismaService) {}
 
-  async create(session: Session): Promise<void> {
-    const data = PrismaSessionMapper.toPrisma(session)
-
-    await this.prisma.session.create({ data })
-  }
-
   async findByRefreshToken(refreshToken: string): Promise<Session | null> {
-    const token = await this.prisma.session.findUnique({
+    const session = await this.prisma.session.findUnique({
       where: { refreshToken },
     })
 
-    if (!token) return null
-
-    return PrismaSessionMapper.toDomain(token)
+    return session ? PrismaSessionMapper.toDomain(session) : null
   }
 
-  async remove({
-    userId,
-    accountId,
-  }: { userId: string; accountId: string }): Promise<void> {
-    await this.prisma.session.deleteMany({
-      where: { userId, accountId },
+  async create(session: Session): Promise<void> {
+    await this.prisma.session.create({
+      data: PrismaSessionMapper.toPrisma(session),
     })
   }
 
-  async upsert(session: Session): Promise<void> {
-    const data = PrismaSessionMapper.toPrisma(session)
+  async remove(accountId: string): Promise<void> {
+    await this.prisma.session.delete({ where: { id: accountId } })
+  }
 
+  async upsert(session: Session): Promise<void> {
     await this.prisma.session.upsert({
-      where: {
-        userId_accountId: {
-          userId: session.userId.toString(),
-          accountId: session.accountId.toString(),
-        },
-      },
-      update: data,
-      create: data,
+      where: { id: session.id.toString() },
+      update: PrismaSessionMapper.toPrisma(session),
+      create: PrismaSessionMapper.toPrisma(session),
     })
   }
 }

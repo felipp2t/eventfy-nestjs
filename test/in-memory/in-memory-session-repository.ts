@@ -4,30 +4,32 @@ import { Session } from '@domain/main/enterprise/entities/session'
 export class InMemorySessionRepository implements SessionRepository {
   public items: Session[] = []
 
-  async findByRefreshToken(refreshToken: string) {
+  async findByRefreshToken(refreshToken: string): Promise<Session | null> {
     return (
       this.items.find(session => session.refreshToken === refreshToken) || null
     )
   }
 
-  async create(session: Session) {
+  async create(session: Session): Promise<void> {
     this.items.push(session)
   }
 
-  async remove({ userId, accountId }: { userId: string; accountId: string }) {
-    this.items = this.items.filter(
-      session =>
-        session.userId.toString() !== userId &&
-        session.accountId.toString() !== accountId
+  async remove(accountId: string): Promise<void> {
+    const index = this.items.findIndex(
+      session => session.accountId.toString() === accountId
     )
+    this.items.splice(index, 1)
   }
 
-  async upsert(session: Session) {
+  async upsert(session: Session): Promise<void> {
     const index = this.items.findIndex(
-      s => s.userId.toString() === session.userId.toString()
+      s => s.accountId.toString() === session.accountId.toString()
     )
-
-    if (index === -1) this.items.push(session)
-    else this.items[index] = session
+    
+    if (index === -1) {
+      this.items.push(session)
+    } else {
+      this.items[index] = session
+    }
   }
 }

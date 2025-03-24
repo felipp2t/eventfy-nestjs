@@ -4,7 +4,6 @@ import { Optional } from 'src/core/types/optional'
 
 export interface SessionProps {
   refreshToken: string
-  userId: UniqueEntityID
   accountId: UniqueEntityID
   createdAt: Date
 }
@@ -12,10 +11,6 @@ export interface SessionProps {
 export class Session extends Entity<SessionProps> {
   get refreshToken(): string {
     return this.props.refreshToken
-  }
-
-  get userId(): UniqueEntityID {
-    return this.props.userId
   }
 
   get accountId(): UniqueEntityID {

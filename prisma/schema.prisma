@@ -7,41 +7,31 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        String    @id @default(uuid())
-  email     String    @unique
-  password  String?
-  createdAt DateTime  @default(now()) @map("created_at")
-  accounts  Account[]
-  tokens    Session[]
-
-  @@map("users")
-}
-
 model Account {
   id         String     @id @default(uuid())
+  email      String     @unique
+  password   String?
+  name       String
   provider   AuthMethod
   providerId String?    @map("provider_id")
-  name       String
-  userId     String     @map("user_id")
-  createdAt  DateTime   @default(now()) @map("created_at")
-  user       User       @relation(fields: [userId], references: [id])
-  token      Session[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  sessions Session[]
 
   @@unique([provider, providerId])
   @@map("accounts")
 }
 
 model Session {
-  id           String   @id @default(uuid())
-  refreshToken String   @unique @map("refresh_token")
-  userId       String   @map("user_id")
-  accountId    String   @map("account_id")
-  createdAt    DateTime @default(now()) @map("created_at")
-  user         User     @relation(fields: [userId], references: [id])
-  account      Account  @relation(fields: [accountId], references: [id])
+  id           String @id @default(uuid())
+  refreshToken String @unique @map("refresh_token")
+  accountId    String @map("account_id")
 
-  @@unique([userId, accountId])
+  createdAt DateTime @default(now()) @map("created_at")
+
+  account Account @relation(fields: [accountId], references: [id])
+
   @@map("sessions")
 }
 

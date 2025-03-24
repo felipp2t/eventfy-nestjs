@@ -12,9 +12,9 @@ export const makeAccount = (
 ) => {
   return Account.create(
     {
+      email: faker.internet.email(),
       name: faker.person.fullName(),
       provider: AUTH_METHOD.EMAIL,
-      userId: new UniqueEntityID(),
       ...override,
     },
     id

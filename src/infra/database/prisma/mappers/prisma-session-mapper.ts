@@ -7,7 +7,6 @@ export class PrismaSessionMapper {
     return Session.create(
       {
         accountId: new UniqueEntityID(raw.accountId),
-        userId: new UniqueEntityID(raw.userId),
         refreshToken: raw.refreshToken,
         createdAt: raw.createdAt,
       },
@@ -17,11 +16,10 @@ export class PrismaSessionMapper {
 
   static toPrisma(session: Session): PrismaSession {
     return {
+      id: session.id.toString(),
       accountId: session.accountId.toString(),
       refreshToken: session.refreshToken,
-      userId: session.userId.toString(),
       createdAt: session.createdAt,
-      id: session.id.toString(),
     }
   }
 }
