@@ -3,11 +3,11 @@ import { FakeCrypto } from '@test/cryptography/fake-crypto'
 import { makeAccount } from '@test/factories/make-account'
 import { InMemoryAccountRepository } from '@test/in-memory/in-memory-account-repository'
 import { InMemorySessionRepository } from '@test/in-memory/in-memory-session-repository'
-import { AuthenticateByEmail } from './authenticate-by-email'
+import { AuthenticateByEmailUseCase } from './authenticate-by-email'
 import { WrongCredentials } from './errors/wrong-credentials'
 
 type SutOutput = {
-  sut: AuthenticateByEmail
+  sut: AuthenticateByEmailUseCase
   inMemoryAccountRepository: InMemoryAccountRepository
   inMemorySessionRepository: InMemorySessionRepository
   encrypter: FakeCrypto
@@ -17,7 +17,7 @@ const makeSut = (): SutOutput => {
   const inMemoryAccountRepository = new InMemoryAccountRepository()
   const inMemorySessionRepository = new InMemorySessionRepository()
   const encrypter = new FakeCrypto()
-  const sut = new AuthenticateByEmail(
+  const sut = new AuthenticateByEmailUseCase(
     inMemoryAccountRepository,
     inMemorySessionRepository,
     encrypter

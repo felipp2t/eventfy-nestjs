@@ -20,7 +20,7 @@ type AuthenticateByEmailResponse = Either<
   }
 >
 
-export class AuthenticateByEmail {
+export class AuthenticateByEmailUseCase {
   constructor(
     private readonly accountRepository: AccountRepository,
     private readonly sessionRepository: SessionRepository,
