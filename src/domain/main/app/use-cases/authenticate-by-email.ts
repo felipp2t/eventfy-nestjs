@@ -48,13 +48,12 @@ export class AuthenticateByEmailUseCase {
     const accessToken = await this.encrypter.encrypt({
       sub: account.id.toString(),
       email: account.email,
+      name: account.name,
+      provider: account.provider,
     })
 
     const refreshToken = await this.encrypter.encrypt(
-      {
-        sub: account.id.toString(),
-        providerId: account.id,
-      },
+      { sub: account.id.toString() },
       '7d'
     )
 
@@ -63,7 +62,7 @@ export class AuthenticateByEmailUseCase {
       refreshToken,
     })
 
-    await this.sessionRepository.create(session)
+    await this.sessionRepository.upsert(session)
 
     return right({
       session: {
