@@ -9,7 +9,7 @@ export class PrismaSessionRepository implements SessionRepository {
   constructor(private prisma: PrismaService) {}
 
   async findByAccountId(accountId: string): Promise<Session | null> {
-    const session = await this.prisma.session.findFirst({
+    const session = await this.prisma.session.findUnique({
       where: { accountId },
     })
 

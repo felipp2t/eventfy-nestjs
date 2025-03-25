@@ -15,11 +15,17 @@ export class JwtEncrypter implements Encrypter, Descrypter {
     payload: Record<string, unknown>,
     expiresIn: string | number = '1d'
   ): Promise<string> {
-    return this.jwtService.signAsync(payload, {
-      privateKey: this.envService.get('JWT_PRIVATE_KEY'),
-      algorithm: 'RS256',
-      expiresIn,
-    })
+    return this.jwtService.signAsync(
+      {
+        ...payload,
+        iat: Date.now(),
+      },
+      {
+        privateKey: this.envService.get('JWT_PRIVATE_KEY'),
+        algorithm: 'RS256',
+        expiresIn,
+      }
+    )
   }
 
   decrypt<T extends object>(ciphertext: string): Promise<T> {

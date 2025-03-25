@@ -57,12 +57,19 @@ export class AuthenticateByEmailUseCase {
       '7d'
     )
 
-    const session = Session.create({
-      accountId: account.id,
-      refreshToken,
-    })
+    const session = await this.sessionRepository.findByAccountId(
+      account.id.toString()
+    )
 
-    await this.sessionRepository.upsert(session)
+    const newSession = Session.create(
+      {
+        accountId: account.id,
+        refreshToken,
+      },
+      session?.id
+    )
+
+    await this.sessionRepository.upsert(newSession)
 
     return right({
       session: {

@@ -26,7 +26,7 @@ model Account {
 model Session {
   id           String @id @default(uuid())
   refreshToken String @unique @map("refresh_token")
-  accountId    String @map("account_id")
+  accountId    String @unique @map("account_id")
 
   createdAt DateTime @default(now()) @map("created_at")
 
