@@ -13,7 +13,7 @@ export class InMemorySessionRepository implements SessionRepository {
 
   async upsert(session: Session): Promise<void> {
     const index = this.items.findIndex(
-      s => s.accountId.toString() === session.accountId.toString()
+      s => s.id.toString() === session.id.toString()
     )
 
     if (index === -1) {
