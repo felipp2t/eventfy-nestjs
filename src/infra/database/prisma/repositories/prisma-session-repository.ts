@@ -8,22 +8,12 @@ import { PrismaService } from '../prisma.service.js'
 export class PrismaSessionRepository implements SessionRepository {
   constructor(private prisma: PrismaService) {}
 
-  async findByRefreshToken(refreshToken: string): Promise<Session | null> {
-    const session = await this.prisma.session.findUnique({
-      where: { refreshToken },
+  async findByAccountId(accountId: string): Promise<Session | null> {
+    const session = await this.prisma.session.findFirst({
+      where: { accountId },
     })
 
     return session ? PrismaSessionMapper.toDomain(session) : null
-  }
-
-  async create(session: Session): Promise<void> {
-    await this.prisma.session.create({
-      data: PrismaSessionMapper.toPrisma(session),
-    })
-  }
-
-  async remove(accountId: string): Promise<void> {
-    await this.prisma.session.delete({ where: { id: accountId } })
   }
 
   async upsert(session: Session): Promise<void> {
