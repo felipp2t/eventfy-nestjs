@@ -16,14 +16,13 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       context.getClass(),
     ])
 
-    if (request.path.startsWith('/api/auth/google')) {
-      return new (AuthGuard('google'))().canActivate(context)
+    switch (true) {
+      case request.path.startsWith('/api/auth/google'):
+        return new (AuthGuard('google'))().canActivate(context)
+      case isPublic:
+        return true
+      default:
+        return super.canActivate(context)
     }
-
-    if (isPublic) {
-      return true
-    }
-
-    return super.canActivate(context)
   }
 }
