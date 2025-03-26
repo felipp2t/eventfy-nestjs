@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common'
 import { Either, left, right } from 'src/core/types/either'
 import { Encrypter } from '../cryptography/encrypter'
 import { AccountRepository } from '../repositories/account-repository'
@@ -14,6 +15,7 @@ type EmailVerificationForPasswordRecoveryUseCaseResponse = Either<
   }
 >
 
+@Injectable()
 export class EmailVerificationForPasswordRecoveryUseCase {
   constructor(
     private readonly accountRepository: AccountRepository,
