@@ -2,11 +2,11 @@ import { Password } from '@domain/main/enterprise/entities/value-objects/passwor
 import { FakeCrypto } from '@test/cryptography/fake-crypto'
 import { makeAccount } from '@test/factories/make-account'
 import { InMemoryAccountRepository } from '@test/in-memory/in-memory-account-repository'
-import { EmailVerificationForPasswordRecovery } from './email-verification-for-password-recovery'
+import { EmailVerificationForPasswordRecoveryUseCase } from './email-verification-for-password-recovery'
 import { UserNotFound } from './errors/user-not-found'
 
 interface SutOutput {
-  sut: EmailVerificationForPasswordRecovery
+  sut: EmailVerificationForPasswordRecoveryUseCase
   inMemoryAccountRepository: InMemoryAccountRepository
   encrypter: FakeCrypto
 }
@@ -15,7 +15,7 @@ const makeSut = (): SutOutput => {
   const inMemoryAccountRepository = new InMemoryAccountRepository()
   const encrypter = new FakeCrypto()
 
-  const sut = new EmailVerificationForPasswordRecovery(
+  const sut = new EmailVerificationForPasswordRecoveryUseCase(
     inMemoryAccountRepository,
     encrypter
   )

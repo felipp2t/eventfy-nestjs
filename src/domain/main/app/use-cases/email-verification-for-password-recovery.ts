@@ -3,18 +3,18 @@ import { Encrypter } from '../cryptography/encrypter'
 import { AccountRepository } from '../repositories/account-repository'
 import { UserNotFound } from './errors/user-not-found'
 
-interface EmailVerificationForPasswordRecoveryRequest {
+interface EmailVerificationForPasswordRecoveryUseCaseRequest {
   email: string
 }
 
-type EmailVerificationForPasswordRecoveryResponse = Either<
+type EmailVerificationForPasswordRecoveryUseCaseResponse = Either<
   UserNotFound,
   {
     token: string
   }
 >
 
-export class EmailVerificationForPasswordRecovery {
+export class EmailVerificationForPasswordRecoveryUseCase {
   constructor(
     private readonly accountRepository: AccountRepository,
     private readonly encrypter: Encrypter
@@ -22,7 +22,7 @@ export class EmailVerificationForPasswordRecovery {
 
   async execute({
     email,
-  }: EmailVerificationForPasswordRecoveryRequest): Promise<EmailVerificationForPasswordRecoveryResponse> {
+  }: EmailVerificationForPasswordRecoveryUseCaseRequest): Promise<EmailVerificationForPasswordRecoveryUseCaseResponse> {
     const account = await this.accountRepository.findByEmail(email)
 
     if (!account) {
